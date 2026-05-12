@@ -1,0 +1,1684 @@
+[
+  {
+    "name": "Gallo",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      195,
+      207,
+      34
+    ],
+    "drops": []
+  },
+  {
+    "name": "Cerdo",
+    "hp": 35,
+    "exp": 75,
+    "gold": 0,
+    "maps": [
+      195,
+      196,
+      34
+    ],
+    "drops": []
+  },
+  {
+    "name": "Vaca",
+    "hp": 65,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      195,
+      196,
+      207
+    ],
+    "drops": []
+  },
+  {
+    "name": "Conejo",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      188,
+      32,
+      35
+    ],
+    "drops": []
+  },
+  {
+    "name": "Pavo Real",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      113
+    ],
+    "drops": []
+  },
+  {
+    "name": "Gallo",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      58,
+      62
+    ],
+    "drops": []
+  },
+  {
+    "name": "Cerdo",
+    "hp": 35,
+    "exp": 75,
+    "gold": 0,
+    "maps": [
+      58,
+      65,
+      66
+    ],
+    "drops": []
+  },
+  {
+    "name": "Vaca",
+    "hp": 45,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      58,
+      62,
+      66
+    ],
+    "drops": []
+  },
+  {
+    "name": "Rata",
+    "hp": 15,
+    "exp": 25,
+    "gold": 0,
+    "maps": [
+      65
+    ],
+    "drops": []
+  },
+  {
+    "name": "Tortuga de Mar",
+    "hp": 315,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      62
+    ],
+    "drops": []
+  },
+  {
+    "name": "Gran Águila",
+    "hp": 40,
+    "exp": 375,
+    "gold": 0,
+    "maps": [
+      62,
+      207,
+      61,
+      63
+    ],
+    "drops": []
+  },
+  {
+    "name": "Jabalí",
+    "hp": 515,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      62
+    ],
+    "drops": []
+  },
+  {
+    "name": "Murciélago",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      37,
+      35,
+      167,
+      168
+    ],
+    "drops": [
+      "90% Monedas de Oro",
+      "10% Monedas de Oro x2",
+      "1% Monedas de Oro x15",
+      "0.1% Monedas de Oro x70"
+    ]
+  },
+  {
+    "name": "Lobo",
+    "hp": 75,
+    "exp": 500,
+    "gold": 0,
+    "maps": [
+      24,
+      158,
+      19,
+      8
+    ],
+    "drops": [
+      "90% Piel Lobo",
+      "10% Chuleta x3",
+      "1% Casco de Lobo",
+      "0.1% Llamado a la Naturaleza"
+    ]
+  },
+  {
+    "name": "Zombie",
+    "hp": 250,
+    "exp": 875,
+    "gold": 0,
+    "maps": [
+      13,
+      18,
+      4,
+      176
+    ],
+    "drops": [
+      "90% Monedas de Oro x21",
+      "10% Ropa de Clan",
+      "1% Monedas de Oro x50",
+      "0.1% Poción Roja x30"
+    ]
+  },
+  {
+    "name": "Esqueleto",
+    "hp": 50,
+    "exp": 235,
+    "gold": 0,
+    "maps": [
+      4,
+      13,
+      12,
+      81
+    ],
+    "drops": [
+      "90% Monedas de Oro x8",
+      "10% Monedas de Oro x8",
+      "1% Ataque de Hambre",
+      "0.1% Espada Larga x2",
+      "0.01% Flecha Mágica"
+    ]
+  },
+  {
+    "name": "Serpiente",
+    "hp": 22,
+    "exp": 75,
+    "gold": 0,
+    "maps": [
+      3,
+      2,
+      23,
+      35
+    ],
+    "drops": [
+      "90% Poción Roja x10",
+      "10% Antídoto Mágico",
+      "1% Toxina"
+    ]
+  },
+  {
+    "name": "Goblin",
+    "hp": 110,
+    "exp": 475,
+    "gold": 0,
+    "maps": [
+      70,
+      29,
+      33,
+      30
+    ],
+    "drops": [
+      "90% Monedas de Oro x15",
+      "10% Monedas de Oro x22",
+      "1% Daga",
+      "0.1% Casco de Hierro",
+      "0.01% Poción Verde x10"
+    ]
+  },
+  {
+    "name": "Gallo Salvaje",
+    "hp": 15,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      46,
+      38,
+      31,
+      82
+    ],
+    "drops": [
+      "90% Pollo",
+      "10% Monedas de Oro x5",
+      "1% Monedas de Oro x50"
+    ]
+  },
+  {
+    "name": "Lord Zombie",
+    "hp": 350,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      268,
+      116,
+      115,
+      21
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Poción Roja x7",
+      "1% Poción Azul x5",
+      "0.1% Llamado Nigromante"
+    ]
+  },
+  {
+    "name": "Esqueleto Guerrero",
+    "hp": 150,
+    "exp": 775,
+    "gold": 0,
+    "maps": [
+      176,
+      159,
+      174,
+      84
+    ],
+    "drops": [
+      "90% Monedas de Oro x25",
+      "10% Casco de Hierro",
+      "1% Hacha Larga de Guerra",
+      "0.1% Invocación de Ultratumba"
+    ]
+  },
+  {
+    "name": "Dragón Rojo",
+    "hp": 5,
+    "exp": 42,
+    "gold": 0,
+    "maps": [
+      115
+    ],
+    "drops": [
+      "90% Monedas de Oro x1000",
+      "10% Túnica Roja",
+      "1% Monedas de Oro x4700",
+      "0.1% Piwafwi de Fuego (EO) x2",
+      "0.01% Armadura de Dragón"
+    ]
+  },
+  {
+    "name": "Araña Gigante",
+    "hp": 1,
+    "exp": 7,
+    "gold": 0,
+    "maps": [
+      45,
+      162,
+      115,
+      213
+    ],
+    "drops": [
+      "90% Monedas de Oro x175",
+      "10% Poción Roja x30",
+      "1% Espada Corta",
+      "0.1% Flecha x110",
+      "0.01% Paralizar"
+    ]
+  },
+  {
+    "name": "Ogro Esclavo",
+    "hp": 2,
+    "exp": 20,
+    "gold": 0,
+    "maps": [
+      76,
+      113,
+      114,
+      267
+    ],
+    "drops": [
+      "90% Monedas de Oro x350",
+      "10% Poción Azul x55",
+      "1% Martillo de Guerra",
+      "0.1% Anillo Mágico"
+    ]
+  },
+  {
+    "name": "Cíclope Guardián",
+    "hp": 4,
+    "exp": 36,
+    "gold": 0,
+    "maps": [
+      113
+    ],
+    "drops": [
+      "90% Monedas de Oro x900",
+      "10% Poción Azul x145",
+      "1% Mazo del Juicio",
+      "0.1% Anillo de Resistencia Mágica",
+      "0.01% Cota de Mallas x3"
+    ]
+  },
+  {
+    "name": "Serpiente de Anthares",
+    "hp": 5,
+    "exp": 17,
+    "gold": 0,
+    "maps": [
+      26,
+      46
+    ],
+    "drops": [
+      "90% Monedas de Oro x3000",
+      "10% Anillo Mágico x3",
+      "1% Anillo de Resistencia Mágica x2",
+      "0.1% Anillo de Disolución Mágica"
+    ]
+  },
+  {
+    "name": "Gorila Salvaje",
+    "hp": 1,
+    "exp": 9,
+    "gold": 0,
+    "maps": [
+      39,
+      38,
+      69,
+      70
+    ],
+    "drops": [
+      "90% Monedas de Oro x175",
+      "10% Poción Roja x30",
+      "1% Poción Azul x50",
+      "0.1% Flecha x310",
+      "0.01% Anillo Mágico x2"
+    ]
+  },
+  {
+    "name": "Djinn de Viento",
+    "hp": 4,
+    "exp": 34,
+    "gold": 0,
+    "maps": [
+      119,
+      227,
+      111,
+      134
+    ],
+    "drops": [
+      "90% Monedas de Oro x1200",
+      "10% Monedas de Oro x1550",
+      "1% Poción Azul x175",
+      "0.1% Paralizar",
+      "0.01% Descarga Eléctrica"
+    ]
+  },
+  {
+    "name": "Dragón de las Profundidades",
+    "hp": 2,
+    "exp": 14,
+    "gold": 0,
+    "maps": [
+      108,
+      119,
+      125,
+      47
+    ],
+    "drops": [
+      "90% Monedas de Oro x150",
+      "10% Poción Azul x120",
+      "1% Tormenta de Fuego",
+      "0.1% Paralizar"
+    ]
+  },
+  {
+    "name": "Gusano de Arena",
+    "hp": 1,
+    "exp": 7,
+    "gold": 0,
+    "maps": [
+      16,
+      15,
+      17,
+      20
+    ],
+    "drops": [
+      "90% Monedas de Oro x175",
+      "10% Poción Roja x30",
+      "1% Poción Amarilla x10",
+      "0.1% Flecha x365"
+    ]
+  },
+  {
+    "name": "Tigre Salvaje",
+    "hp": 800,
+    "exp": 3,
+    "gold": 0,
+    "maps": [
+      31,
+      207,
+      70
+    ],
+    "drops": [
+      "90% Piel Lobo x20",
+      "10% Chuleta x23",
+      "1% Armadura de Cuero",
+      "0.1% Casco de Tigre"
+    ]
+  },
+  {
+    "name": "Orco",
+    "hp": 350,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      46,
+      72
+    ],
+    "drops": [
+      "90% Monedas de Oro x114",
+      "10% Hacha",
+      "1% Poción Verde x10",
+      "0.1% Mazo del Juicio x2",
+      "0.01% Cota de Mallas x2"
+    ]
+  },
+  {
+    "name": "Orco",
+    "hp": 350,
+    "exp": 1,
+    "gold": 132,
+    "maps": [
+      38,
+      213,
+      39,
+      76
+    ],
+    "drops": [
+      "90% Hacha"
+    ]
+  },
+  {
+    "name": "Águila",
+    "hp": 40,
+    "exp": 50,
+    "gold": 0,
+    "maps": [
+      206,
+      23,
+      160
+    ],
+    "drops": [
+      "90% Pescado",
+      "10% Pez Dorado x5"
+    ]
+  },
+  {
+    "name": "Escorpión",
+    "hp": 32,
+    "exp": 160,
+    "gold": 0,
+    "maps": [
+      17,
+      16,
+      207,
+      15
+    ],
+    "drops": [
+      "90% Monedas de Oro x2",
+      "10% Monedas de Oro x30",
+      "1% Espada Larga",
+      "0.1% Espada Corta"
+    ]
+  },
+  {
+    "name": "Bandido",
+    "hp": 200,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      191,
+      55,
+      165,
+      3
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Ropa de Pordiosero",
+      "1% Poción Roja x10",
+      "0.1% Guantes de Hurto"
+    ]
+  },
+  {
+    "name": "Asesino",
+    "hp": 850,
+    "exp": 7,
+    "gold": 0,
+    "maps": [
+      54,
+      42,
+      192
+    ],
+    "drops": [
+      "90% Monedas de Oro x200",
+      "10% Poción Roja x10",
+      "1% Daga +3",
+      "0.1% Daga +4",
+      "0.01% Armadura de las Sombras"
+    ]
+  },
+  {
+    "name": "Osezno",
+    "hp": 400,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      186
+    ],
+    "drops": [
+      "90% Piel Oso Pardo",
+      "10% Poción Roja x10",
+      "1% Flecha x50"
+    ]
+  },
+  {
+    "name": "Cuervo Salvaje",
+    "hp": 50,
+    "exp": 205,
+    "gold": 0,
+    "maps": [
+      194,
+      271,
+      26,
+      63
+    ],
+    "drops": [
+      "90% Monedas de Oro x4",
+      "10% Monedas de Oro x53",
+      "1% Monedas de Oro x250",
+      "0.1% Monedas de Oro x1000"
+    ]
+  },
+  {
+    "name": "Hormiga Gigante",
+    "hp": 400,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      10,
+      94,
+      178,
+      161
+    ],
+    "drops": [
+      "90% Monedas de Oro x100",
+      "10% Arco Simple",
+      "1% Arco Compuesto",
+      "0.1% Poción Roja x15",
+      "0.01% Flecha x500"
+    ]
+  },
+  {
+    "name": "Hormiga Marabunta",
+    "hp": 5,
+    "exp": 25,
+    "gold": 0,
+    "maps": [
+      40,
+      179,
+      194,
+      45
+    ],
+    "drops": [
+      "90% Monedas de Oro",
+      "10% Monedas de Oro x10",
+      "1% Monedas de Oro x200"
+    ]
+  },
+  {
+    "name": "Rata Salvaje",
+    "hp": 15,
+    "exp": 80,
+    "gold": 0,
+    "maps": [
+      190,
+      5,
+      157,
+      192
+    ],
+    "drops": [
+      "90% Monedas de Oro x2",
+      "10% Queso de Cabra x10",
+      "1% Odre Vacía x10",
+      "0.1% Monedas de Oro x100"
+    ]
+  },
+  {
+    "name": "Beholder",
+    "hp": 1,
+    "exp": 12,
+    "gold": 0,
+    "maps": [
+      166,
+      162,
+      165,
+      207
+    ],
+    "drops": [
+      "90% Monedas de Oro x360",
+      "10% Monedas de Oro x500",
+      "1% Poción Azul x100",
+      "0.1% Proyectil Mágico",
+      "0.01% Monedas de Oro x10000"
+    ]
+  },
+  {
+    "name": "Oso Pardo",
+    "hp": 600,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      186,
+      71,
+      67,
+      72
+    ],
+    "drops": [
+      "90% Piel Oso Pardo",
+      "10% Monedas de Oro x26",
+      "1% Flecha x50",
+      "0.1% Arco Compuesto",
+      "0.01% Poción Roja x100"
+    ]
+  },
+  {
+    "name": "Tortuga Gigante",
+    "hp": 550,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      73,
+      75,
+      159,
+      85
+    ],
+    "drops": [
+      "90% Escudo de Tortuga",
+      "10% Monedas de Oro x175",
+      "1% Poción Roja x20",
+      "0.1% Curar Heridas Graves"
+    ]
+  },
+  {
+    "name": "Duende",
+    "hp": 210,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      115,
+      68,
+      67,
+      81
+    ],
+    "drops": [
+      "90% Monedas de Oro x23",
+      "10% Monedas de Oro x150",
+      "1% Flecha Mágica",
+      "0.1% Flecha Eléctrica"
+    ]
+  },
+  {
+    "name": "Ogro",
+    "hp": 2,
+    "exp": 18,
+    "gold": 0,
+    "maps": [
+      166,
+      114,
+      211,
+      111
+    ],
+    "drops": [
+      "90% Monedas de Oro x512",
+      "10% Garrote x20",
+      "1% Poción Roja x120",
+      "0.1% Poción Azul x150",
+      "0.01% Anillo de Resistencia Mágica"
+    ]
+  },
+  {
+    "name": "Gran Dragón Rojo",
+    "hp": 2,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      166
+    ],
+    "drops": [
+      "90% Monedas de Oro x65000",
+      "10% Minerales de Oro x5000",
+      "1% Espada Mata Dragones",
+      "0.1% Apocalipsis",
+      "0.01% Armadura de Dragón x3"
+    ]
+  },
+  {
+    "name": "Demonio",
+    "hp": 15,
+    "exp": 112,
+    "gold": 0,
+    "maps": [
+      184,
+      116
+    ],
+    "drops": [
+      "90% Monedas de Oro x6000",
+      "10% Monedas de Oro x10000",
+      "1% Hacha Larga de Guerra",
+      "0.1% Hacha de Guerra Dos Filos x3",
+      "0.01% Armadura Escarlata"
+    ]
+  },
+  {
+    "name": "Unicornio",
+    "hp": 500,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      188
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Monedas de Oro x80",
+      "1% Monedas de Oro x150",
+      "0.1% Poción Azul x50",
+      "0.01% Monedas de Oro x5000"
+    ]
+  },
+  {
+    "name": "Licántropo",
+    "hp": 600,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      281
+    ],
+    "drops": [
+      "90% Monedas de Oro x100",
+      "10% Poción Roja x10",
+      "1% Piel Lobo x30",
+      "0.1% Casco de Lobo",
+      "0.01% Llamado a la Naturaleza"
+    ]
+  },
+  {
+    "name": "Tarántula",
+    "hp": 1,
+    "exp": 7,
+    "gold": 0,
+    "maps": [
+      141,
+      42
+    ],
+    "drops": [
+      "90% Monedas de Oro x175",
+      "10% Poción Roja x25",
+      "1% Poción Amarilla x15",
+      "0.1% Poción Verde x20",
+      "0.01% Hacha de Bárbaro x5"
+    ]
+  },
+  {
+    "name": "Leviathan",
+    "hp": 6,
+    "exp": 45,
+    "gold": 0,
+    "maps": [
+      119,
+      108,
+      209,
+      125
+    ],
+    "drops": [
+      "90% Monedas de Oro x2100",
+      "10% Poción Amarilla x30",
+      "1% Poción Verde x30",
+      "0.1% Invocar Elemental de Agua",
+      "0.01% Armadura de la Ciénaga"
+    ]
+  },
+  {
+    "name": "Orco Brujo",
+    "hp": 1,
+    "exp": 14,
+    "gold": 0,
+    "maps": [
+      111,
+      113,
+      114,
+      140
+    ],
+    "drops": [
+      "90% Monedas de Oro x500",
+      "10% Monedas de Oro x650",
+      "1% Proyectil Mágico",
+      "0.1% Poción Roja x300",
+      "0.01% Poción Azul x500"
+    ]
+  },
+  {
+    "name": "Bruja",
+    "hp": 4,
+    "exp": 31,
+    "gold": 0,
+    "maps": [
+      111,
+      140,
+      145,
+      114
+    ],
+    "drops": [
+      "90% Monedas de Oro x1000",
+      "10% Bastón Nudoso",
+      "1% Monedas de Oro x5000",
+      "0.1% Monedas de Oro x15000"
+    ]
+  },
+  {
+    "name": "Mago Malvado",
+    "hp": 3,
+    "exp": 21,
+    "gold": 0,
+    "maps": [
+      113,
+      111,
+      165,
+      163
+    ],
+    "drops": [
+      "90% Monedas de Oro x1500",
+      "10% Monedas de Oro x2000",
+      "1% Túnica Roja Especial (E/G) x2",
+      "0.1% Paralizar",
+      "0.01% Báculo Engarzado x5"
+    ]
+  },
+  {
+    "name": "Golem",
+    "hp": 32,
+    "exp": 300,
+    "gold": 0,
+    "maps": [
+      166,
+      48,
+      141
+    ],
+    "drops": [
+      "90% Monedas de Oro x2000",
+      "10% Monedas de Oro x2750",
+      "1% Porción de Tarta x10000",
+      "0.1% Espada de Plata x2",
+      "0.01% Armadura Legendaria"
+    ]
+  },
+  {
+    "name": "Medusa",
+    "hp": 7,
+    "exp": 57,
+    "gold": 0,
+    "maps": [
+      166,
+      48,
+      142,
+      144
+    ],
+    "drops": [
+      "90% Monedas de Oro x1200",
+      "10% Poción Roja x100",
+      "1% Monedas de Oro x7500",
+      "0.1% Paralizar",
+      "0.01% Descarga Eléctrica"
+    ]
+  },
+  {
+    "name": "Liche",
+    "hp": 2,
+    "exp": 15,
+    "gold": 0,
+    "maps": [
+      115,
+      113,
+      140,
+      142
+    ],
+    "drops": [
+      "90% Monedas de Oro x1000",
+      "10% Monedas de Oro x2000",
+      "1% Túnica de Mago x5",
+      "0.1% Invocación de Ultratumba",
+      "0.01% Báculo Engarzado x5"
+    ]
+  },
+  {
+    "name": "Lord Orco",
+    "hp": 1,
+    "exp": 13,
+    "gold": 0,
+    "maps": [
+      114,
+      113,
+      212,
+      111
+    ],
+    "drops": [
+      "90% Monedas de Oro x800",
+      "10% Poción Roja x100",
+      "1% Casco de Hierro x2",
+      "0.1% Hacha Larga de Guerra x5",
+      "0.01% Escudo de Plata x3"
+    ]
+  },
+  {
+    "name": "Quark",
+    "hp": 50,
+    "exp": 125,
+    "gold": 0,
+    "maps": [
+      157,
+      159
+    ],
+    "drops": [
+      "90% Monedas de Oro x15",
+      "10% Monedas de Oro x20",
+      "1% Monedas de Oro x100",
+      "0.1% Monedas de Oro x250",
+      "0.01% Monedas de Oro x750"
+    ]
+  },
+  {
+    "name": "Jabalí Salvaje",
+    "hp": 515,
+    "exp": 1,
+    "gold": 0,
+    "maps": [
+      210,
+      188,
+      82
+    ],
+    "drops": [
+      "90% Chuleta x10",
+      "10% Monedas de Oro x50",
+      "1% Poción Roja x20"
+    ]
+  },
+  {
+    "name": "Serpiente",
+    "hp": 22,
+    "exp": 75,
+    "gold": 0,
+    "maps": [
+      39
+    ],
+    "drops": []
+  },
+  {
+    "name": "Murciélago",
+    "hp": 10,
+    "exp": 60,
+    "gold": 0,
+    "maps": [
+      32
+    ],
+    "drops": []
+  },
+  {
+    "name": "Galeón Pirata",
+    "hp": 4,
+    "exp": 30,
+    "gold": 0,
+    "maps": [
+      201,
+      284,
+      206
+    ],
+    "drops": [
+      "90% Monedas de Oro x5000",
+      "10% Barca",
+      "1% Galera",
+      "0.1% Galeón"
+    ]
+  },
+  {
+    "name": "Galeón Fantasmal",
+    "hp": 7,
+    "exp": 52,
+    "gold": 0,
+    "maps": [
+      47,
+      201,
+      230
+    ],
+    "drops": [
+      "90% Monedas de Oro x3500",
+      "10% Barca",
+      "1% Galera"
+    ]
+  },
+  {
+    "name": "Árbol Encantado",
+    "hp": 10,
+    "exp": 500,
+    "gold": 0,
+    "maps": [
+      186
+    ],
+    "drops": [
+      "90% Leña x15"
+    ]
+  },
+  {
+    "name": "Ucorno",
+    "hp": 1,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      186,
+      188
+    ],
+    "drops": [
+      "90% Leña x50",
+      "10% Leña x100",
+      "1% Leña x500",
+      "0.1% Leña x3000",
+      "0.01% Leña x10000"
+    ]
+  },
+  {
+    "name": "Cerdo Salvaje",
+    "hp": 35,
+    "exp": 75,
+    "gold": 0,
+    "maps": [
+      157,
+      188,
+      210
+    ],
+    "drops": [
+      "90% Chuleta",
+      "10% Monedas de Oro x10"
+    ]
+  },
+  {
+    "name": "Vaca Salvaje",
+    "hp": 65,
+    "exp": 125,
+    "gold": 0,
+    "maps": [
+      157,
+      188
+    ],
+    "drops": [
+      "90% Chuleta x5",
+      "10% Monedas de Oro x50"
+    ]
+  },
+  {
+    "name": "Enano de las Profundidades",
+    "hp": 3,
+    "exp": 23,
+    "gold": 0,
+    "maps": [
+      264,
+      265,
+      266,
+      267
+    ],
+    "drops": [
+      "90% Monedas de Oro x500",
+      "10% Poción Roja x50",
+      "1% Hacha de Bárbaro",
+      "0.1% Armadura de Placas Completa (E/G) x2",
+      "0.01% Armadura de Placas Completa +2 (E/G) x3"
+    ]
+  },
+  {
+    "name": "Demonio Infernal",
+    "hp": 14,
+    "exp": 105,
+    "gold": 0,
+    "maps": [
+      184
+    ],
+    "drops": [
+      "90% Monedas de Oro x8000",
+      "10% Monedas de Oro x16000",
+      "1% Hacha Larga de Guerra x3",
+      "0.1% Hacha de Guerra Dos Filos x5",
+      "0.01% Armadura Escarlata x2"
+    ]
+  },
+  {
+    "name": "Dragón Rojo Infernal",
+    "hp": 5,
+    "exp": 39,
+    "gold": 0,
+    "maps": [
+      184
+    ],
+    "drops": [
+      "90% Monedas de Oro x4000",
+      "10% Monedas de Oro x6000",
+      "1% Monedas de Oro x10000",
+      "0.1% Monedas de Oro x50000",
+      "0.01% Espada Mata Dragones"
+    ]
+  },
+  {
+    "name": "Golem Infernal",
+    "hp": 42,
+    "exp": 394,
+    "gold": 0,
+    "maps": [
+      184,
+      166
+    ],
+    "drops": [
+      "90% Monedas de Oro x15000",
+      "10% Poción Roja x1000",
+      "1% Poción Azul x2000",
+      "0.1% Monedas de Oro x100000",
+      "0.01% Armadura Legendaria x2"
+    ]
+  },
+  {
+    "name": "Astaroth",
+    "hp": 3,
+    "exp": 28,
+    "gold": 0,
+    "maps": [
+      184
+    ],
+    "drops": [
+      "90% Monedas de Oro x2500",
+      "10% Poción Azul x200",
+      "1% Tormenta de Fuego",
+      "0.1% Inmovilizar x2",
+      "0.01% Anillo de Disolución Mágica x3"
+    ]
+  },
+  {
+    "name": "Elemental de Fuego Anciano",
+    "hp": 7,
+    "exp": 54,
+    "gold": 0,
+    "maps": [
+      184
+    ],
+    "drops": [
+      "90% Monedas de Oro x10000",
+      "10% Monedas de Oro x15000",
+      "1% Tormenta de Fuego x2",
+      "0.1% Invocar Elemental de Fuego",
+      "0.01% Apocalipsis"
+    ]
+  },
+  {
+    "name": "Blattodea",
+    "hp": 435,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      178,
+      176,
+      177,
+      174
+    ],
+    "drops": [
+      "90% Monedas de Oro x100",
+      "10% Monedas de Oro x150",
+      "1% Monedas de Oro x300",
+      "0.1% Monedas de Oro x600",
+      "0.01% Monedas de Oro x1200"
+    ]
+  },
+  {
+    "name": "Artopleura",
+    "hp": 700,
+    "exp": 5,
+    "gold": 0,
+    "maps": [
+      178,
+      177
+    ],
+    "drops": [
+      "90% Monedas de Oro x125",
+      "10% Monedas de Oro x200",
+      "1% Monedas de Oro x300",
+      "0.1% Monedas de Oro x500",
+      "0.01% Monedas de Oro x1500"
+    ]
+  },
+  {
+    "name": "Araña de los Rincones",
+    "hp": 650,
+    "exp": 3,
+    "gold": 0,
+    "maps": [
+      176,
+      178,
+      267,
+      265
+    ],
+    "drops": [
+      "90% Monedas de Oro x75",
+      "10% Daga Envenenada",
+      "1% Toxina"
+    ]
+  },
+  {
+    "name": "Pirata",
+    "hp": 700,
+    "exp": 5,
+    "gold": 0,
+    "maps": [
+      201,
+      284
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Espada Dos Manos",
+      "1% Sable",
+      "0.1% Guantes de Hurto"
+    ]
+  },
+  {
+    "name": "Escarabajo Gigante",
+    "hp": 550,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      175
+    ],
+    "drops": [
+      "90% Monedas de Oro x150",
+      "10% Monedas de Oro x200",
+      "1% Monedas de Oro x600"
+    ]
+  },
+  {
+    "name": "Tentáculo Putrefacto",
+    "hp": 600,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      177,
+      178,
+      190,
+      173
+    ],
+    "drops": [
+      "90% Monedas de Oro x70",
+      "10% Monedas de Oro x140",
+      "1% Monedas de Oro x200"
+    ]
+  },
+  {
+    "name": "Espíritu chocarrero",
+    "hp": 400,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      28
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Poción Roja x10"
+    ]
+  },
+  {
+    "name": "Protector de los muertos",
+    "hp": 435,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      28
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Monedas de Oro x65",
+      "1% Invocación de Ultratumba"
+    ]
+  },
+  {
+    "name": "Hada Oscura",
+    "hp": 650,
+    "exp": 3,
+    "gold": 0,
+    "maps": [
+      281,
+      28
+    ],
+    "drops": [
+      "90% Monedas de Oro x75",
+      "10% Harapos de la Cueva (EO) x2",
+      "1% Anillo Mágico x2",
+      "0.1% Descarga Eléctrica"
+    ]
+  },
+  {
+    "name": "Engendro de las profundidades",
+    "hp": 550,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      281
+    ],
+    "drops": [
+      "90% Monedas de Oro x75",
+      "10% Poción Roja x12",
+      "1% Garrote x4",
+      "0.1% Armadura de Cuero"
+    ]
+  },
+  {
+    "name": "Ave de las profundidades",
+    "hp": 700,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      281
+    ],
+    "drops": [
+      "90% Monedas de Oro x125",
+      "10% Flecha +1 x50",
+      "1% Flecha +2 x50"
+    ]
+  },
+  {
+    "name": "Piraña",
+    "hp": 800,
+    "exp": 5,
+    "gold": 0,
+    "maps": [
+      155,
+      181,
+      252,
+      283
+    ],
+    "drops": [
+      "90% Monedas de Oro x150",
+      "10% Monedas de Oro x275",
+      "1% Poción Amarilla x10"
+    ]
+  },
+  {
+    "name": "Sirena",
+    "hp": 1,
+    "exp": 9,
+    "gold": 0,
+    "maps": [
+      283,
+      209,
+      230,
+      47
+    ],
+    "drops": [
+      "90% Monedas de Oro x230",
+      "10% Flauta Mágica x2",
+      "1% Aturdir"
+    ]
+  },
+  {
+    "name": "Manta raya",
+    "hp": 600,
+    "exp": 2,
+    "gold": 0,
+    "maps": [
+      252,
+      283
+    ],
+    "drops": [
+      "90% Monedas de Oro x100",
+      "10% Poción Roja x20",
+      "1% Poción Amarilla x4"
+    ]
+  },
+  {
+    "name": "Lutra",
+    "hp": 2,
+    "exp": 13,
+    "gold": 0,
+    "maps": [
+      284
+    ],
+    "drops": [
+      "90% Monedas de Oro x550",
+      "10% Poción Amarilla x15",
+      "1% Poción Verde x15",
+      "0.1% Monedas de Oro x13500"
+    ]
+  },
+  {
+    "name": "Tiburón",
+    "hp": 2,
+    "exp": 18,
+    "gold": 0,
+    "maps": [
+      134,
+      230,
+      252,
+      284
+    ],
+    "drops": [
+      "90% Monedas de Oro x150",
+      "10% Poción Roja x25",
+      "1% Poción Verde x5",
+      "0.1% Monedas de Oro x2100"
+    ]
+  },
+  {
+    "name": "Capitán Pirata",
+    "hp": 2,
+    "exp": 20,
+    "gold": 0,
+    "maps": [
+      201,
+      284
+    ],
+    "drops": [
+      "90% Monedas de Oro x1000",
+      "10% Monedas de Oro x1640",
+      "1% Sable x2",
+      "0.1% Barca"
+    ]
+  },
+  {
+    "name": "Guardián de las Profundidades",
+    "hp": 2,
+    "exp": 17,
+    "gold": 0,
+    "maps": [
+      285
+    ],
+    "drops": [
+      "90% Monedas de Oro x400",
+      "10% Poción Azul x50",
+      "1% Poción Roja x130",
+      "0.1% Tormenta de Fuego"
+    ]
+  },
+  {
+    "name": "Elemental de Agua Anciano",
+    "hp": 7,
+    "exp": 49,
+    "gold": 0,
+    "maps": [
+      285
+    ],
+    "drops": [
+      "90% Monedas de Oro x10000",
+      "10% Monedas de Oro x19050",
+      "1% Desaturdir",
+      "0.1% Aturdir",
+      "0.01% Invocar Elemental de Agua"
+    ]
+  },
+  {
+    "name": "Kraken",
+    "hp": 6,
+    "exp": 52,
+    "gold": 0,
+    "maps": [
+      285
+    ],
+    "drops": [
+      "90% Monedas de Oro x1200",
+      "10% Poción Roja x110",
+      "1% Casco de Plata",
+      "0.1% Paralizar",
+      "0.01% Galera"
+    ]
+  },
+  {
+    "name": "Fango",
+    "hp": 750,
+    "exp": 4,
+    "gold": 0,
+    "maps": [
+      190
+    ],
+    "drops": [
+      "90% Monedas de Oro x100",
+      "10% Poción Roja x18",
+      "1% Poción Azul x30",
+      "0.1% Poción Amarilla x10",
+      "0.01% Poción Verde x10"
+    ]
+  },
+  {
+    "name": "Cocodrilo",
+    "hp": 550,
+    "exp": 5,
+    "gold": 0,
+    "maps": [
+      190
+    ],
+    "drops": [
+      "90% Daga Envenenada",
+      "10% Daga +2"
+    ]
+  },
+  {
+    "name": "Unicornio",
+    "hp": 1,
+    "exp": 9,
+    "gold": 0,
+    "maps": [
+      189,
+      187
+    ],
+    "drops": [
+      "90% Monedas de Oro x150",
+      "10% Poción Azul x23",
+      "1% Vara de Fresno",
+      "0.1% Anillo Mágico",
+      "0.01% Anillo de Resistencia Mágica"
+    ]
+  },
+  {
+    "name": "Elfo Guardián",
+    "hp": 1,
+    "exp": 11,
+    "gold": 0,
+    "maps": [
+      189
+    ],
+    "drops": [
+      "90% Monedas de Oro x500",
+      "10% Flecha x115",
+      "1% Arco Compuesto x3",
+      "0.1% Flecha +1 x200",
+      "0.01% Arco de Cazador x6"
+    ]
+  },
+  {
+    "name": "Árbol capturador de Almas",
+    "hp": 2,
+    "exp": 15,
+    "gold": 0,
+    "maps": [
+      186
+    ],
+    "drops": [
+      "90% Monedas de Oro x1000",
+      "10% Hacha de leña Elfica x2",
+      "1% Poción Roja x300",
+      "0.1% Curar Heridas Graves"
+    ]
+  },
+  {
+    "name": "Sapo",
+    "hp": 35,
+    "exp": 300,
+    "gold": 0,
+    "maps": [
+      190
+    ],
+    "drops": [
+      "90% Monedas de Oro x50",
+      "10% Monedas de Oro x500",
+      "1% Monedas de Oro x5000"
+    ]
+  },
+  {
+    "name": "Lobo Invernal",
+    "hp": 6,
+    "exp": 39,
+    "gold": 13,
+    "maps": [
+      286
+    ],
+    "drops": [
+      "90% Piel de lobo invernal"
+    ]
+  },
+  {
+    "name": "Oso Polar",
+    "hp": 15,
+    "exp": 112,
+    "gold": 27,
+    "maps": [
+      287
+    ],
+    "drops": [
+      "90% Piel Oso Polar"
+    ]
+  },
+  {
+    "name": "Pingüino",
+    "hp": 3,
+    "exp": 18,
+    "gold": 7,
+    "maps": [
+      286
+    ],
+    "drops": []
+  },
+  {
+    "name": "Golem de Hielo",
+    "hp": 28,
+    "exp": 325,
+    "gold": 42,
+    "maps": [
+      288
+    ],
+    "drops": []
+  }
+]
