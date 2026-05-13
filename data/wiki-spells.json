@@ -1,0 +1,290 @@
+[
+  {
+    "name": "Antídoto Mágico",
+    "desc": "Con este conjuro podrás mutar los fluidos tóxicos de tu cuerpo para detener su vil accionar, contrar",
+    "skill": 5,
+    "mana": 10,
+    "words": "-",
+    "vendor": "NIHIL VED",
+    "drop": "Mago (Mapa: 1), Mago (Mapa: 196)"
+  },
+  {
+    "name": "Dardo Mágico",
+    "desc": "Éste es uno de los más elementales y sencillos hechizos de ataque que podrás aprender. No causa un g",
+    "skill": 0,
+    "mana": 10,
+    "words": "10-15",
+    "vendor": "OHL VOR PEK",
+    "drop": "Mago (Mapa: 1), Mago (Mapa: 196)"
+  },
+  {
+    "name": "Curar Heridas Leves",
+    "desc": "Con este sencillo conjuro podrás efectuar la sanación inmediata de pequeñas heridas y devolver lenta",
+    "skill": 10,
+    "mana": 10,
+    "words": "5-15",
+    "vendor": "CORP SANC",
+    "drop": "Mago (Mapa: 34), Mago (Mapa: 196)"
+  },
+  {
+    "name": "Toxina",
+    "desc": "Con este hechizo de aprendizaje simple y veloz, podrás inundar el cuerpo de la víctima de un mortal ",
+    "skill": 20,
+    "mana": 24,
+    "words": "-",
+    "vendor": "SERP XON IN",
+    "drop": "Mago (Mapa: 196)"
+  },
+  {
+    "name": "Curar Heridas Graves",
+    "desc": "Con esta milagrosa sanación para las heridas más profundas y dolorosas, podrás rápidamente devolver ",
+    "skill": 38,
+    "mana": 40,
+    "words": "20-50",
+    "vendor": "EN CORP SANCTIS",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 151)"
+  },
+  {
+    "name": "Flecha Mágica",
+    "desc": "Con este sortilegio lograrás que una inmaterial flecha impacte en la víctima produciéndole heridas d",
+    "skill": 12,
+    "mana": 20,
+    "words": "18-25",
+    "vendor": "VAX PER",
+    "drop": "Mago (Mapa: 1)"
+  },
+  {
+    "name": "Flecha Eléctrica",
+    "desc": "Éste es un interesante hechizo que te permitirá canalizar las elergías eléctricas del mundo en ataqu",
+    "skill": 20,
+    "mana": 30,
+    "words": "25-35",
+    "vendor": "SUN VAP",
+    "drop": "Mago (Mapa: 34), Mago (Mapa: 196)"
+  },
+  {
+    "name": "Proyectil Mágico",
+    "desc": "Este rentable hechizo de ataque resulta el ideal para los niveles intermedios, pues les permitirá un",
+    "skill": 33,
+    "mana": 45,
+    "words": "35-45",
+    "vendor": "VAX IN TAR",
+    "drop": "Mago (Mapa: 34)"
+  },
+  {
+    "name": "Paralizar",
+    "desc": "Con este arcano encantamiento podrás dejar completamente petrificado a la víctima durante un determi",
+    "skill": 50,
+    "mana": 400,
+    "words": "-",
+    "vendor": "HOAX VORP",
+    "drop": "Mago (Mapa: 59)"
+  },
+  {
+    "name": "Remover Parálisis",
+    "desc": "Conjuro con el cual podrás contrarrestar los efectos tanto de la parálisis como de la inmovilización",
+    "skill": 45,
+    "mana": 300,
+    "words": "-",
+    "vendor": "AN HOAX VORP",
+    "drop": "Mago (Mapa: 59)"
+  },
+  {
+    "name": "Resucitar",
+    "desc": "Encanto sagrado que te permitirá devolver la vida a los difuntos. Esta increíble habilidad fue enseñ",
+    "skill": 100,
+    "mana": 550,
+    "words": "-",
+    "vendor": "AHIL KNÄ XÄR",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 62)"
+  },
+  {
+    "name": "Ataque de Hambre",
+    "desc": "Embrujo que tiene por objeto provocar un considerable desbalance nutricional en el destinatario, lo ",
+    "skill": 5,
+    "mana": 20,
+    "words": "-",
+    "vendor": "ÔL AEX",
+    "drop": "Mago (Mapa: 1)"
+  },
+  {
+    "name": "Terrible hambre de Igôr",
+    "desc": "Abominable hechizo que provoca en la víctima un estado de desnutrición absoluto. Este encantamiento ",
+    "skill": 35,
+    "mana": 55,
+    "words": "-",
+    "vendor": "ÛX&#x27;ÔL AEX",
+    "drop": "Mago (Mapa: 34)"
+  },
+  {
+    "name": "Invisibilidad",
+    "desc": "Se trata de uno de los recursos mágicos más importante de estas tierras. Con él podrás volverte (tú ",
+    "skill": 87,
+    "mana": 500,
+    "words": "-",
+    "vendor": "-",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 151)"
+  },
+  {
+    "name": "Tormenta de Fuego",
+    "desc": "Poderoso hechizo de ataque. Su costo en relación al daño que provoca lo convierte en un arma más pro",
+    "skill": 60,
+    "mana": 150,
+    "words": "45-55",
+    "vendor": "EN VAX ON TAR",
+    "drop": "Mago (Mapa: 59)"
+  },
+  {
+    "name": "Llamado a la Naturaleza",
+    "desc": "El secreto druídico de la invocación se concentra en este embrujo, que te permitirá implorar por ayu",
+    "skill": 35,
+    "mana": 120,
+    "words": "-",
+    "vendor": "Nature et worg",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 62)"
+  },
+  {
+    "name": "Llamado Nigromante",
+    "desc": "Con este espantoso ritual de magia negra podrás lograr que los restos mortales de quienes descansan ",
+    "skill": 50,
+    "mana": 220,
+    "words": "-",
+    "vendor": "MoÎ cámus",
+    "drop": "Mago (Mapa: 151), Mago (Mapa: 62)"
+  },
+  {
+    "name": "Celeridad",
+    "desc": "Podrás aumentar la agilidad del destinatario a través de este muy útil sortilegio. Con él devolverás",
+    "skill": 35,
+    "mana": 40,
+    "words": "-",
+    "vendor": "YUP A&#x27;INC",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Torpeza",
+    "desc": "Este conjuro tiene por finalidad contrarrestar o anular los efectos del hechizo de celeridad, reduci",
+    "skill": 20,
+    "mana": 20,
+    "words": "-",
+    "vendor": "ASYNC YUP A&#x27;INC",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Fuerza",
+    "desc": "El poder mágico que encierra este hechizo te permitirá aumentar notoriamente la fuerza y el poderío ",
+    "skill": 40,
+    "mana": 50,
+    "words": "-",
+    "vendor": "Ar A&#x27;kron",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Debilidad",
+    "desc": "Este conjuro tiene por finalidad contrarrestar o anular los efectos del hechizo de Fuerza, reduciend",
+    "skill": 35,
+    "mana": 45,
+    "words": "-",
+    "vendor": "Xoom varp",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Descarga Eléctrica",
+    "desc": "Éste es uno de los hechizos de daño más poderoso de todo el Argentum. Al controlarlo podrás manipula",
+    "skill": 85,
+    "mana": 460,
+    "words": "69-77",
+    "vendor": "T&#x27;HY KOOOL",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 151)"
+  },
+  {
+    "name": "Inmovilizar",
+    "desc": "Este valioso sortilegio te permitirá dejar a la víctima sin la capacidad de desplazarse, tendrá la s",
+    "skill": 60,
+    "mana": 300,
+    "words": "-",
+    "vendor": "Är Prop s&#x27;uo",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Apocalipsis",
+    "desc": "El ataque mágico más letal de estas tierras. Sólo aquellos avezados en el arte de la magia pueden ap",
+    "skill": 100,
+    "mana": 1,
+    "words": "91-100",
+    "vendor": "Rahma Nañarak O&#x27;al",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Invocar Elemental de Fuego",
+    "desc": "Encontrarás la colaboración de uno de los elementos vitales del universo, el corazón mismo del ardor",
+    "skill": 75,
+    "mana": 1,
+    "words": "-",
+    "vendor": "Fir Yur&#x27;rax",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Invocar Elemental de Agua",
+    "desc": "Encontrarás la colaboración de uno de los elementos que conforman el universo, el agua vital vendrá ",
+    "skill": 75,
+    "mana": 980,
+    "words": "30-55",
+    "vendor": "Wata Mantra&#x27;rax",
+    "drop": "Mago (Mapa: 59), Mago (Mapa: 151)"
+  },
+  {
+    "name": "Invocar Elemental de Tierra",
+    "desc": "Encontrarás la colaboración de uno de los elementos vitales del universo, la sagrada tierra vendrá e",
+    "skill": 75,
+    "mana": 980,
+    "words": "-",
+    "vendor": "Mu Mantra&#x27;rax",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Aturdir",
+    "desc": "Este sortilegio provocará que la víctima pierda momentáneamente todo tipo de sentido de la orientaci",
+    "skill": 30,
+    "mana": 800,
+    "words": "-",
+    "vendor": "ASYNC GAM ALÛ",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Invocación de Ultratumba",
+    "desc": "Utilizando el obscuro y controvertido arte de la nigromancia eres capaz de reanimar los restos de un",
+    "skill": 50,
+    "mana": 220,
+    "words": "-",
+    "vendor": "Cörpse Dûm Ex",
+    "drop": "Mago (Mapa: 34)"
+  },
+  {
+    "name": "Desaturdir",
+    "desc": "Con este conjuro podrás contrarrestar los nefastos efectos del hechizo aturdir.",
+    "skill": 45,
+    "mana": 350,
+    "words": "-",
+    "vendor": "AN ASYNC GAM ALÛ",
+    "drop": "Mago (Mapa: 59)"
+  },
+  {
+    "name": "Mimetismo",
+    "desc": "Con este encantamiento adquirirás temporalmente la apariencia física de otra persona.",
+    "skill": 75,
+    "mana": 800,
+    "words": "-",
+    "vendor": "Cimim Ux Maïo",
+    "drop": "Mago (Mapa: 62)"
+  },
+  {
+    "name": "Detectar Invisibilidad",
+    "desc": "Detecta todo usuario invisible en el rango de vision del usuario.",
+    "skill": 78,
+    "mana": 750,
+    "words": "-",
+    "vendor": "Lux Detegat",
+    "drop": "Mago (Mapa: 62)"
+  }
+]

@@ -1,0 +1,19 @@
+# Temp / scratch files
+tmp_chunk_*.txt
+*.tmp
+*.bak
+
+# Local Claude state (project memory, settings)
+.claude/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# OneDrive sync junk
+~$*
