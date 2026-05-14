@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AOWeb HUD
 // @namespace    achalay.aoweb
-// @version      1.5
-// @description  HUD unificado: wiki live (NPCs+hechizos+mapas), bestiario, target frame, CC tracker, drops, mana, session history.
+// @version      1.11
+// @description  Auto-Ataque fijo arriba (sticky) + double-tap Space para toggle + slider desde 0ms con presets + multi-target CC con click-to-lock y colores por instancia + auto-renovar Celeridad piloto.
 // @match        https://aoweb.app/play
 // @run-at       document-start
 // @grant        none
@@ -136,9 +136,7 @@
   let lastOffensiveSpell = null;
   let lastOffensiveSpellAt = 0;
 
-  const SPELL_SPRITES = {
-    'Proyectil Mágico': 'data:image/png;base64,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',
-  };
+  const SPELL_SPRITES = {};
   const SPELL_SPRITE_FRAMES = 5;
   const SPELL_SPRITE_FRAME_MS = 180;
 
@@ -255,7 +253,201 @@
   let aoHeadsData = null;
   let aoGraficosData = null;
   let selectedHeadId = null;
+  let activeCharId = null;
   try { selectedHeadId = +localStorage.getItem('aoweb-hud-headid') || null; } catch(e) {}
+  try { activeCharId = localStorage.getItem('aoweb-hud-charid') || null; } catch(e) {}
+
+  // Per-instance CC tracking: each cast creates its own timer, so multi-target works
+  const myCCInstances = []; // [{ id, name, state, castAt, duration }]
+  let myCCNextId = 1;
+
+  // Measure attack interval (weapon cooldown) from successful melee hits
+  let lastMeleeHitAt = 0;
+  let measuredAttackIntervalMs = null;
+  const attackIntervalSamples = []; // sliding window of last 10
+  const ATTACK_SAMPLES_MAX = 10;
+
+  // ===== Macros / Auto-attack / Combos (v1.6) =====
+  let playerMacros = [];
+  let autoAttackEnabled = false;
+  let autoAttackIntervalId = null;
+  let autoAttackDelayMs = 800;
+  try {
+    const _saved = localStorage.getItem('aoweb-hud-aaspeed');
+    if (_saved !== null) {
+      const _n = +_saved;
+      if (!isNaN(_n) && _n >= 0 && _n <= 2000) autoAttackDelayMs = _n;
+    }
+  } catch(e) {}
+
+  // v1.11: double-tap Space toggle
+  let lastSpaceAt = 0;
+  const DOUBLE_TAP_MS = 300;
+
+  // v1.11: auto-renovar Celeridad piloto
+  let autoRenewCeleridadEnabled = false;
+  try { autoRenewCeleridadEnabled = localStorage.getItem('aoweb-hud-autorenew') === '1'; } catch(e) {}
+  let lastAutoRenewAt = 0;
+  const AUTO_RENEW_COOLDOWN_MS = 8000;
+  const AUTO_RENEW_THRESHOLD_S = 5;
+  const CELERIDAD_MACRO_KEY = 'Digit1'; // v1.11: hardcoded tecla 1
+
+  // v1.11: colores rotando por índice de instancia CC (para distinguir Oso 1/Oso 2/Oso 3)
+  const CC_COLORS = ['#3a6fb0','#a06fc8','#d4a857','#5ba075','#c46a6a'];
+
+  async function fetchActiveCharacter() {
+    try {
+      const [me, settings] = await Promise.all([
+        fetch('/api/auth/me', { credentials: 'include' }).then(r => r.ok ? r.json() : null),
+        fetch('/api/auth/character-settings', { credentials: 'include' }).then(r => r.ok ? r.json() : null),
+      ]);
+      if (!me || !settings) return null;
+      const active = me.characters && me.characters.find(c => c._id === settings.characterId);
+      if (!active) return null;
+      const charChanged = active._id !== activeCharId;
+      activeCharId = active._id;
+      try { localStorage.setItem('aoweb-hud-charid', active._id); } catch(e) {}
+      // Always trust API for name/class/level — it's authoritative
+      playerName = active.name;
+      playerClass = active.className;
+      playerLevel = active.level;
+      // For head: auto-set if first install OR if character changed (let user pick custom otherwise)
+      if (active.id_head && (charChanged || !selectedHeadId)) {
+        selectedHeadId = active.id_head;
+        try { localStorage.setItem('aoweb-hud-headid', String(active.id_head)); } catch(e) {}
+      }
+      console.log(`[AOWeb HUD] Active char: ${active.name} (${active.className}, lvl ${active.level}, head ${active.id_head})`);
+      return active;
+    } catch (e) {
+      console.log('[AOWeb HUD] Active char API fetch failed:', e);
+      return null;
+    }
+  }
+
+  // ===== Synthetic key dispatch (v1.6) =====
+  // Verified: aoweb's PixiJS engine accepts dispatched KeyboardEvents (M opens map, etc).
+  function codeToKey(code) {
+    if (!code) return '';
+    if (code.startsWith('Key')) return code.slice(3).toLowerCase();
+    if (code.startsWith('Digit')) return code.slice(5);
+    if (code === 'Space') return ' ';
+    if (code === 'Escape') return 'Escape';
+    if (code === 'Enter') return 'Enter';
+    return code.toLowerCase();
+  }
+  function codeToKeyCode(code) {
+    if (!code) return 0;
+    if (code.startsWith('Key')) return code.charCodeAt(3);
+    if (code.startsWith('Digit')) return 48 + parseInt(code.slice(5), 10);
+    if (code === 'Space') return 32;
+    if (code === 'Escape') return 27;
+    if (code === 'Enter') return 13;
+    return 0;
+  }
+  function dispatchGameKey(code) {
+    const ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && (!ae.id || !ae.id.startsWith('aohud'))) return false;
+    const target = document.querySelector('canvas') || document;
+    const key = codeToKey(code);
+    const kc = codeToKeyCode(code);
+    const opts = { key, code, keyCode: kc, which: kc, bubbles: true, cancelable: true };
+    target.dispatchEvent(new KeyboardEvent('keydown', opts));
+    setTimeout(() => target.dispatchEvent(new KeyboardEvent('keyup', opts)), 40);
+    return true;
+  }
+  // v1.11: dispatchClick — sintetiza pointerdown/mousedown + click en (x, y) sobre un elemento.
+  // El motor de aoweb acepta synthetic KeyboardEvents (verificado v1.6); este helper hace lo
+  // mismo para mouse para hechizos self-target (PJ siempre en el centro del canvas).
+  function dispatchClick(target, x, y) {
+    if (!target) return;
+    const baseOpts = {
+      bubbles: true, cancelable: true, view: window,
+      clientX: x, clientY: y, screenX: x, screenY: y,
+      button: 0, buttons: 1,
+    };
+    try {
+      target.dispatchEvent(new PointerEvent('pointerdown', { ...baseOpts, pointerType: 'mouse', isPrimary: true }));
+    } catch(e) {}
+    target.dispatchEvent(new MouseEvent('mousedown', baseOpts));
+    setTimeout(() => {
+      try {
+        target.dispatchEvent(new PointerEvent('pointerup', { ...baseOpts, buttons: 0, pointerType: 'mouse', isPrimary: true }));
+      } catch(e) {}
+      target.dispatchEvent(new MouseEvent('mouseup', { ...baseOpts, buttons: 0 }));
+      target.dispatchEvent(new MouseEvent('click', { ...baseOpts, buttons: 0 }));
+    }, 50);
+  }
+
+  // v1.11: autoRenewCeleridad — tecla 1 + click al centro del canvas (sobre PJ).
+  function autoRenewCeleridad() {
+    const now = Date.now();
+    if (now - lastAutoRenewAt < AUTO_RENEW_COOLDOWN_MS) return;
+    const ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) {
+      console.log('[AOWeb HUD][auto-renew] skipped: input has focus');
+      return;
+    }
+    const canvas = document.querySelector('canvas');
+    if (!canvas) { console.warn('[AOWeb HUD][auto-renew] canvas not found'); return; }
+    lastAutoRenewAt = now;
+    console.log('[AOWeb HUD][auto-renew] firing Celeridad (key 1 + click center)');
+    const ok = dispatchGameKey(CELERIDAD_MACRO_KEY);
+    if (!ok) { console.warn('[AOWeb HUD][auto-renew] dispatchGameKey returned false'); return; }
+    setTimeout(() => {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      console.log('[AOWeb HUD][auto-renew] dispatching click at', Math.round(cx), Math.round(cy));
+      dispatchClick(canvas, cx, cy);
+    }, 80);
+    showToast('Renovando Celeridad', '<5s para expirar', '🌀', 'discovery');
+  }
+
+  function setAutoRenewCeleridad(enabled) {
+    autoRenewCeleridadEnabled = !!enabled;
+    try { localStorage.setItem('aoweb-hud-autorenew', enabled ? '1' : '0'); } catch(e) {}
+    if (currentTab === 'macros') renderManual();
+    showToast(enabled ? 'Auto-renovar Celeridad ON' : 'Auto-renovar Celeridad OFF', enabled ? 'Re-cast a <5s' : '', '🌀', enabled ? 'learned' : 'discovery');
+    if (enabled) ensureBuffTicker();
+  }
+  function formatKeyLabel(code) {
+    if (!code) return '?';
+    if (code.startsWith('Key')) return code.slice(3);
+    if (code.startsWith('Digit')) return code.slice(5);
+    if (code === 'Space') return 'ESPACIO';
+    if (code === 'Escape') return 'ESC';
+    return code;
+  }
+  async function fetchPlayerMacros() {
+    try {
+      const r = await fetch('/api/auth/character-settings', { credentials: 'include' });
+      if (!r.ok) return;
+      const d = await r.json();
+      playerMacros = Array.isArray(d.macros) ? d.macros : [];
+      if (currentTab === 'macros') renderManual();
+    } catch (e) { console.log('[AOWeb HUD] Macros fetch failed:', e); }
+  }
+  function setAutoAttack(enabled) {
+    autoAttackEnabled = enabled;
+    if (autoAttackIntervalId) { clearInterval(autoAttackIntervalId); autoAttackIntervalId = null; }
+    if (enabled) {
+      autoAttackIntervalId = setInterval(() => { dispatchGameKey('Space'); }, autoAttackDelayMs);
+      showToast('Auto-ataque ON', `Espacio cada ${autoAttackDelayMs}ms`, '⚔', 'learned');
+    } else {
+      showToast('Auto-ataque OFF', '', '⏹', 'discovery');
+    }
+    if (currentTab === 'macros') renderManual();
+    refreshStickyAA();
+  }
+  function refreshStickyAA() {
+    const stickyAA = document.getElementById('aohud-aa-sticky');
+    const stateEl = document.getElementById('aohud-aa-state');
+    if (!stickyAA || !stateEl) return;
+    stickyAA.classList.toggle('on', autoAttackEnabled);
+    stateEl.textContent = autoAttackEnabled ? `ON · ${autoAttackDelayMs}ms` : 'OFF';
+  }
+
+  // (v1.10: helpers de auto-renovar y auto-despara eliminados)
 
   async function loadHeadData() {
     try {
@@ -265,7 +457,9 @@
       ]);
       aoHeadsData = hResp;
       aoGraficosData = gResp;
+      await fetchActiveCharacter();
       if (selectedHeadId) applyHeadAvatar(selectedHeadId);
+      renderPlayerFrame();
     } catch(e) { console.log('[AOWeb HUD] Head data fetch failed:', e); }
   }
 
@@ -597,6 +791,34 @@
       font-size: 10px; color: #f4d97a;
       text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
+    /* v1.11 — Sticky Auto-Ataque (siempre arriba, no se mueve con CC activos) */
+    #aohud-panel .aa-sticky { display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px; cursor: pointer;
+      background: linear-gradient(180deg, rgba(35,18,8,0.7), rgba(15,10,5,0.85));
+      border-bottom: 1px solid rgba(106, 74, 24, 0.6);
+      border-top: 1px solid rgba(106, 74, 24, 0.3);
+      font-family: 'Cinzel', serif; font-size: 13px;
+      color: #b8a878; letter-spacing: 1.5px; text-transform: uppercase;
+      transition: background 0.15s, color 0.15s; user-select: none; }
+    #aohud-panel .aa-sticky:hover { background: linear-gradient(180deg, rgba(45,25,10,0.85), rgba(20,12,6,0.95));
+      color: #d4a857; }
+    #aohud-panel .aa-sticky .aa-ico { font-size: 16px; }
+    #aohud-panel .aa-sticky .aa-lbl { flex: 1; }
+    #aohud-panel .aa-sticky .aa-state { font-family: 'Press Start 2P', monospace;
+      font-size: 9px; padding: 3px 6px; border-radius: 3px;
+      background: rgba(80,80,70,0.3); color: #8a7a5a;
+      border: 1px solid rgba(106, 74, 24, 0.4); }
+    #aohud-panel .aa-sticky.on { background: linear-gradient(180deg, rgba(60,18,18,0.75), rgba(20,8,8,0.9));
+      color: #ffb0b0;
+      box-shadow: 0 0 12px rgba(255, 80, 80, 0.35) inset; }
+    #aohud-panel .aa-sticky.on .aa-state { background: rgba(160,24,24,0.5);
+      color: #ffd0d0; border-color: #ff6464;
+      animation: aohud-aa-state-pulse 1.4s ease-in-out infinite; }
+    @keyframes aohud-aa-state-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,100,100,0); }
+      50% { box-shadow: 0 0 0 3px rgba(255,100,100,0.4); }
+    }
+
     /* Tabs */
     #aohud-panel .tabs { display: flex;
       border-bottom: 1px solid rgba(106, 74, 24, 0.6); }
@@ -619,6 +841,83 @@
     #aohud-panel .empty { padding: 16px 8px; text-align: center; color: #7a7a6a;
       font-family: 'IM Fell English', serif; font-style: italic;
       font-size: 14px; line-height: 1.5; }
+
+    /* Macros tab */
+    #aohud-panel .m-title { font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 0.3em; color: #d4a857; text-transform: uppercase;
+      margin: 10px 0 6px; padding-bottom: 3px;
+      border-bottom: 1px solid rgba(138, 106, 42, 0.35); }
+    #aohud-panel .m-btn { display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 8px 10px; margin-bottom: 5px;
+      background: rgba(15,12,8,0.55); border: 1px solid #5a4a25;
+      border-left: 3px solid #8a6a2a; color: #e8e8d0; cursor: pointer;
+      text-align: left; transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      font-family: inherit; }
+    #aohud-panel .m-btn:hover { background: rgba(212,168,87,0.18);
+      border-color: #d4a857; }
+    #aohud-panel .m-btn:active { transform: scale(0.98); }
+    #aohud-panel .m-btn.fired { background: rgba(108,221,138,0.3);
+      border-left-color: #6dd58a; }
+    #aohud-panel .m-btn .m-ico { font-size: 18px; flex-shrink: 0;
+      width: 22px; text-align: center; }
+    #aohud-panel .m-btn .m-info { flex: 1; display: flex; flex-direction: column;
+      min-width: 0; line-height: 1.2; }
+    #aohud-panel .m-btn .m-name { font-family: 'Cinzel', serif; font-size: 13px;
+      color: #efe2c5; }
+    #aohud-panel .m-btn .m-key { font-family: 'IM Fell English', serif;
+      font-size: 11px; color: #b89a5a; margin-top: 1px; }
+    #aohud-panel .m-btn.m-aa { border-left-color: #a01818; }
+    #aohud-panel .m-btn.m-aa.on { background: rgba(160,24,24,0.28);
+      border-left-color: #ff6464; animation: aohud-aa-pulse 1.2s ease-in-out infinite; }
+    #aohud-panel .m-btn.m-aa.on .m-name { color: #ffb0b0; }
+    @keyframes aohud-aa-pulse {
+      0%, 100% { box-shadow: inset 0 0 0 0 rgba(255,100,100,0); }
+      50% { box-shadow: inset 0 0 14px 0 rgba(255,100,100,0.35); }
+    }
+    #aohud-panel .m-slider-row { display: flex; align-items: center; gap: 8px;
+      padding: 6px 0 10px; }
+    #aohud-panel .m-slider-lbl { font-family: 'IM Fell English', serif;
+      font-size: 12px; color: #b8a878; flex-shrink: 0; min-width: 60px; }
+    #aohud-panel .m-slider { flex: 1; -webkit-appearance: none; appearance: none;
+      height: 6px; background: rgba(15,12,8,0.6); border: 1px solid #5a4a25;
+      border-radius: 3px; outline: none; cursor: pointer; }
+    #aohud-panel .m-slider::-webkit-slider-thumb { -webkit-appearance: none;
+      appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: #d4a857; border: 2px solid #1a1408; cursor: pointer;
+      box-shadow: 0 0 4px rgba(212,168,87,0.6); }
+    #aohud-panel .m-slider::-moz-range-thumb { width: 14px; height: 14px;
+      border-radius: 50%; background: #d4a857; border: 2px solid #1a1408;
+      cursor: pointer; box-shadow: 0 0 4px rgba(212,168,87,0.6); }
+    #aohud-panel .m-slider:hover::-webkit-slider-thumb { background: #f4d97a; }
+    #aohud-panel .m-slider-val { font-family: 'Press Start 2P', monospace;
+      font-size: 10px; color: #f4d97a; min-width: 56px; text-align: right; }
+    /* v1.11: presets de velocidad */
+    #aohud-panel .m-preset-row { display: flex; gap: 4px; padding: 0 0 10px; flex-wrap: wrap; }
+    #aohud-panel .m-preset-btn { flex: 1; min-width: 38px; padding: 4px 6px;
+      background: rgba(15,12,8,0.5); border: 1px solid #5a4a25; color: #b89a5a;
+      font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer;
+      border-radius: 3px; transition: all 0.15s; }
+    #aohud-panel .m-preset-btn:hover { background: rgba(212,168,87,0.2); color: #f4d97a;
+      border-color: #d4a857; }
+    #aohud-panel .m-preset-btn.active { background: rgba(212,168,87,0.32); color: #f4d97a;
+      border-color: #d4a857; box-shadow: 0 0 6px rgba(212,168,87,0.45) inset; }
+    #aohud-panel .m-measure-row { display: flex; align-items: center; gap: 6px;
+      padding: 4px 0 10px; flex-wrap: wrap; }
+    #aohud-panel .m-measure-lbl { font-family: 'IM Fell English', serif;
+      font-size: 12px; color: #b8a878; flex: 1; min-width: 0; }
+    #aohud-panel .m-measure-lbl b { color: #f4d97a;
+      font-family: 'Press Start 2P', monospace; font-size: 11px; }
+    #aohud-panel .m-use-measured { background: rgba(108,221,138,0.18);
+      border: 1px solid #6dd58a; color: #b6f0c3; padding: 4px 10px;
+      font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer;
+      transition: background 0.15s; }
+    #aohud-panel .m-use-measured:hover { background: rgba(108,221,138,0.32); }
+    #aohud-panel .m-reset-measured { background: rgba(15,12,8,0.5);
+      border: 1px solid #5a4a25; color: #b89a5a; padding: 4px 7px;
+      font-family: monospace; font-size: 13px; cursor: pointer; }
+    #aohud-panel .m-reset-measured:hover { background: rgba(212,168,87,0.2); color: #f4d97a; }
+    #aohud-panel .m-hint { font-family: 'IM Fell English', serif; font-size: 11px;
+      color: #7a7a6a; padding: 4px 2px 8px; line-height: 1.4; font-style: italic; }
 
     /* Target Card */
     #aohud-target-card { padding: 10px; margin-bottom: 8px;
@@ -781,6 +1080,28 @@
     #aohud-panel .am-item.is-target {
       border-color: #f4d97a;
       box-shadow: 0 0 0 1px rgba(212, 168, 87, 0.4) inset, 0 0 8px rgba(212, 168, 87, 0.3); }
+    /* v1.11 — Lock per-instance: card clickeada explícitamente queda con glow dorado fuerte */
+    #aohud-panel .am-item.is-locked {
+      border-color: #f4d97a; border-width: 2px;
+      box-shadow: 0 0 0 1px rgba(244,217,122,0.6) inset, 0 0 16px rgba(244,217,122,0.55);
+      background: linear-gradient(135deg, rgba(212, 168, 87, 0.28), rgba(45, 22, 10, 0.7)); }
+    /* v1.11 — Color rotatorio por índice de instancia (borde izquierdo grueso) */
+    #aohud-panel .am-item { border-left-width: 4px; }
+    #aohud-panel .am-item.cc-c0 { border-left-color: #3a6fb0; }
+    #aohud-panel .am-item.cc-c1 { border-left-color: #a06fc8; }
+    #aohud-panel .am-item.cc-c2 { border-left-color: #d4a857; }
+    #aohud-panel .am-item.cc-c3 { border-left-color: #5ba075; }
+    #aohud-panel .am-item.cc-c4 { border-left-color: #c46a6a; }
+    #aohud-panel .am-item .cc-badge { display: inline-block; min-width: 18px; padding: 0 4px;
+      margin-right: 4px; border-radius: 3px;
+      font-family: 'Cinzel', serif; font-weight: 800; font-size: 12px;
+      color: #1a1408; text-align: center; line-height: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    #aohud-panel .am-item.cc-c0 .cc-badge { background: #6f9ed4; }
+    #aohud-panel .am-item.cc-c1 .cc-badge { background: #c89ed8; }
+    #aohud-panel .am-item.cc-c2 .cc-badge { background: #f4d97a; }
+    #aohud-panel .am-item.cc-c3 .cc-badge { background: #8fcfa5; }
+    #aohud-panel .am-item.cc-c4 .cc-badge { background: #e0a0a0; }
     #aohud-panel .am-item.urgent {
       border-color: #e24b4a;
       animation: aohud-am-pulse 0.6s infinite ease-in-out; }
@@ -905,36 +1226,49 @@
     /* === CC TRACKER — top-left, below buffs === */
 
     /* === FLOATING COMBAT TEXT === */
+    /* Beefy outline + larger font so our numbers visually cover the game's native ones */
     #aohud-fct { position: fixed; z-index: 2147483644;
       pointer-events: none; overflow: visible; }
     .aohud-fct-num { position: absolute; white-space: nowrap;
       font-family: 'Press Start 2P', monospace; font-weight: 700;
-      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+      text-shadow:
+        3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000,
+        0 3px 0 #000, 0 -3px 0 #000, 3px 0 0 #000, -3px 0 0 #000,
+        0 0 12px rgba(0,0,0,0.95);
       animation: aohud-fct-rise 1.2s ease-out forwards;
       pointer-events: none; }
-    .aohud-fct-num.dealt { color: #f4d97a; font-size: 14px; }
-    .aohud-fct-num.crit { color: #ff6644; font-size: 18px; }
-    .aohud-fct-num.spell { color: #5eaaff; font-size: 15px; text-shadow: 0 0 8px rgba(94, 170, 255, 0.7), 0 1px 3px rgba(0,0,0,0.9); }
-    .aohud-fct-num.recv { color: #ff4444; font-size: 12px; }
-    .aohud-fct-num.heal { color: #6dd58a; font-size: 15px;
-      text-shadow: 0 0 8px rgba(109, 213, 138, 0.7), 0 1px 3px rgba(0,0,0,0.9); }
+    .aohud-fct-num.dealt { color: #f4d97a; font-size: 20px; }
+    .aohud-fct-num.crit { color: #ff6644; font-size: 26px; }
+    .aohud-fct-num.spell { color: #5eaaff; font-size: 22px; }
+    .aohud-fct-num.recv { color: #ff4444; font-size: 18px; }
+    .aohud-fct-num.heal { color: #6dd58a; font-size: 22px; }
     @keyframes aohud-fct-rise {
       0% { opacity: 1; transform: translateY(0) scale(1); }
       20% { transform: translateY(-12px) scale(1.1); }
       100% { opacity: 0; transform: translateY(-50px) scale(0.8); }
     }
 
-    /* Spell cast flash above PJ */
+    /* Spell cast: 3 emojis serpenteando hacia arriba (left/right/left wave) */
     .aohud-spell-flash { position: absolute; pointer-events: none;
       font-size: 28px; text-align: center; line-height: 1;
-      animation: aohud-spell-pop 1.6s ease-out forwards;
+      animation: aohud-spell-serpent 1.9s ease-out forwards;
       filter: drop-shadow(0 0 12px var(--spell-glow, rgba(94,170,255,0.8))); }
-    @keyframes aohud-spell-pop {
-      0% { opacity: 0; transform: translateY(0) scale(0.6); }
-      12% { opacity: 0.7; transform: translateY(-10px) scale(1.1); }
-      25% { opacity: 1; transform: translateY(-16px) scale(1); }
-      60% { opacity: 0.5; transform: translateY(-30px) scale(0.9); }
-      100% { opacity: 0; transform: translateY(-50px) scale(0.7); }
+    .aohud-spell-flash.alt { animation-name: aohud-spell-serpent-alt; }
+    @keyframes aohud-spell-serpent {
+      0%   { opacity: 0;   transform: translate(0, 0)      scale(0.5); }
+      12%  { opacity: 1;   transform: translate(-14px,-12px) scale(1.15); }
+      30%  { opacity: 1;   transform: translate(14px,-32px)  scale(1.05); }
+      50%  { opacity: 0.95;transform: translate(-12px,-55px) scale(0.95); }
+      72%  { opacity: 0.75;transform: translate(10px,-82px)  scale(0.85); }
+      100% { opacity: 0;   transform: translate(0,-120px)    scale(0.6); }
+    }
+    @keyframes aohud-spell-serpent-alt {
+      0%   { opacity: 0;   transform: translate(0, 0)       scale(0.5); }
+      12%  { opacity: 1;   transform: translate(14px,-12px)  scale(1.15); }
+      30%  { opacity: 1;   transform: translate(-14px,-32px) scale(1.05); }
+      50%  { opacity: 0.95;transform: translate(12px,-55px)  scale(0.95); }
+      72%  { opacity: 0.75;transform: translate(-10px,-82px) scale(0.85); }
+      100% { opacity: 0;   transform: translate(0,-120px)    scale(0.6); }
     }
   `;
   document.documentElement.appendChild(styles);
@@ -958,8 +1292,14 @@
         </div>
       </div>
     </div>
+    <div class="aa-sticky" id="aohud-aa-sticky" title="Auto-ataque (doble-tap Space para toggle)">
+      <span class="aa-ico">⚔</span>
+      <span class="aa-lbl">Auto-Ataque</span>
+      <span class="aa-state" id="aohud-aa-state">OFF</span>
+    </div>
     <div class="tabs">
       <div class="tab active" data-tab="manual">Manual</div>
+      <div class="tab" data-tab="macros">Macros</div>
       <div class="tab" data-tab="stats">Sesión</div>
     </div>
     <div class="search-wrap" id="aohud-search-wrap">
@@ -1004,11 +1344,12 @@
     const el = document.createElement('div');
     el.className = `aohud-fct-num ${kind}`;
     el.textContent = text;
-    const spread = 60;
+    const spread = 80;
     const xOffset = (Math.random() - 0.5) * spread;
     const slot = fctSlot++ % 4;
-    el.style.left = (r.width / 2 + xOffset - 20) + 'px';
-    el.style.top = (r.height / 2 - 30 - slot * 18) + 'px';
+    // Render well above center so we don't sit on top of the game's native damage numbers
+    el.style.left = (r.width / 2 + xOffset - 25) + 'px';
+    el.style.top = (r.height / 2 - 90 - slot * 26) + 'px';
     fctEl.style.left = r.left + 'px';
     fctEl.style.top = r.top + 'px';
     fctEl.style.width = r.width + 'px';
@@ -1057,14 +1398,20 @@
         el.style.backgroundPosition = `-${frame * size}px 0`;
       }, SPELL_SPRITE_FRAME_MS);
     } else {
-      const el = document.createElement('div');
-      el.className = 'aohud-spell-flash';
-      el.textContent = icon;
-      el.style.setProperty('--spell-glow', glowColors[spellName] || 'rgba(94,170,255,0.8)');
-      el.style.left = (r.width / 2 - 14) + 'px';
-      el.style.top = (r.height / 2 - 80) + 'px';
-      fctEl.appendChild(el);
-      setTimeout(() => el.remove(), 1700);
+      const glow = glowColors[spellName] || 'rgba(94,170,255,0.8)';
+      const baseLeft = r.width / 2 - 14;
+      const baseTop = r.height / 2 - 80;
+      for (let i = 0; i < 3; i++) {
+        const el = document.createElement('div');
+        el.className = i % 2 === 1 ? 'aohud-spell-flash alt' : 'aohud-spell-flash';
+        el.textContent = icon;
+        el.style.setProperty('--spell-glow', glow);
+        el.style.left = (baseLeft + (Math.random() - 0.5) * 16) + 'px';
+        el.style.top = baseTop + 'px';
+        el.style.animationDelay = (i * 0.18) + 's';
+        fctEl.appendChild(el);
+        setTimeout(() => el.remove(), 2100 + i * 200);
+      }
     }
   }
 
@@ -1134,6 +1481,11 @@
     });
   }
 
+  // NOTE (v1.8.2): on current aoweb build, VIDA/MANA are rendered into canvas,
+  // not DOM. So this reader almost always finds nothing and sets values to null.
+  // Auto-curar / auto-meditar respect that and won't fire blindly.
+  // Inventory counters like "3/5" (shield) and "4/9" (arrows) DO appear in DOM —
+  // we filter them out by requiring max > 100 (HP/MP are always 3 digits+).
   function readPlayerHP() {
     const hpMpPairs = [];
     document.querySelectorAll('span').forEach(el => {
@@ -1142,7 +1494,9 @@
       const m = el.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/);
       if (m) {
         const curr = +m[1], max = +m[2];
-        if (max > 0 && max < 100000) hpMpPairs.push({ curr, max });
+        // Inventory slot counters (shield 3/5, arrows 4/9, etc.) are always small.
+        // Real HP/MP at any meaningful level are 100+.
+        if (max >= 100 && max < 100000) hpMpPairs.push({ curr, max });
       }
     });
     if (hpMpPairs.length >= 2) {
@@ -1150,6 +1504,11 @@
       playerMP = hpMpPairs[1].curr; playerMaxMP = hpMpPairs[1].max;
     } else if (hpMpPairs.length === 1) {
       playerHP = hpMpPairs[0].curr; playerMaxHP = hpMpPairs[0].max;
+      playerMP = null; playerMaxMP = null;
+    } else {
+      // Nothing detected — canvas-rendered. Clear so auto-cast knows not to trust.
+      playerHP = null; playerMaxHP = null;
+      playerMP = null; playerMaxMP = null;
     }
     if (playerMaxHP > 0 && playerHP > 0 && playerHP / playerMaxHP <= LOW_HP_THRESHOLD) {
       playLowHPAlert();
@@ -1301,25 +1660,48 @@
       }
       const dbSubLine = dbInfo ? `<div style="font-size:11px;color:#6a6a5a;font-style:italic;margin-top:2px">${dbInfo.drops && dbInfo.drops.length ? dbInfo.drops[0] : ''}${dbInfo.maps && dbInfo.maps.length ? ' · mapa ' + dbInfo.maps[0] : ''}</div>` : '';
       let statesHTML = '';
-      const targetEnt = entities.get(currentTarget.name);
-      if (targetEnt?.stateTimers && targetEnt.stateTimers.size > 0) {
-        const now2 = Date.now();
-        const stateItems = [...targetEnt.stateTimers.entries()].map(([state, castAt]) => {
-          const dur = getStateDuration(state);
-          const remain = dur ? Math.max(0, dur - (now2 - castAt) / 1000) : null;
-          const ico = getStateIcon(state);
-          const timeTxt = remain !== null ? fmtTime(remain) : '?';
-          const urgentClass = remain !== null && remain < 5 ? 'urgent' : '';
-          const unknownClass = remain === null ? 'unknown-dur' : '';
-          return `<div class="state-item ${urgentClass} ${unknownClass}"><span>${ico}</span><span>${escHtml(state)}</span><span class="state-time">${timeTxt}</span></div>`;
-        }).join('');
-        statesHTML = `<div class="states-container"><div class="states-label">Estados</div>${stateItems}</div>`;
+      let lockedInstance = null;
+      if (currentTarget.ccInstanceId) {
+        lockedInstance = myCCInstances.find(c => c.id === currentTarget.ccInstanceId);
+        // si la instancia ya expiró (>5s después), limpiar el lock para fallback por nombre
+        if (lockedInstance && (Date.now() - lockedInstance.castAt) / 1000 > lockedInstance.duration + 5) {
+          currentTarget.ccInstanceId = null;
+          lockedInstance = null;
+        }
       }
+      if (lockedInstance) {
+        // v1.11: target lockeado a una instancia CC específica — mostrar solo SU timer
+        const now2 = Date.now();
+        const remain = Math.max(0, lockedInstance.duration - (now2 - lockedInstance.castAt) / 1000);
+        const ico = getStateIcon(lockedInstance.state);
+        const timeTxt = fmtTime(remain);
+        const urgentClass = remain < 5 ? 'urgent' : '';
+        statesHTML = `<div class="states-container">
+          <div class="states-label">Estado lockeado · #${lockedInstance.displayIndex || 1}</div>
+          <div class="state-item ${urgentClass}"><span>${ico}</span><span>${escHtml(lockedInstance.state)}</span><span class="state-time">${timeTxt}</span></div>
+        </div>`;
+      } else {
+        const targetEnt = entities.get(currentTarget.name);
+        if (targetEnt?.stateTimers && targetEnt.stateTimers.size > 0) {
+          const now2 = Date.now();
+          const stateItems = [...targetEnt.stateTimers.entries()].map(([state, castAt]) => {
+            const dur = getStateDuration(state);
+            const remain = dur ? Math.max(0, dur - (now2 - castAt) / 1000) : null;
+            const ico = getStateIcon(state);
+            const timeTxt = remain !== null ? fmtTime(remain) : '?';
+            const urgentClass = remain !== null && remain < 5 ? 'urgent' : '';
+            const unknownClass = remain === null ? 'unknown-dur' : '';
+            return `<div class="state-item ${urgentClass} ${unknownClass}"><span>${ico}</span><span>${escHtml(state)}</span><span class="state-time">${timeTxt}</span></div>`;
+          }).join('');
+          statesHTML = `<div class="states-container"><div class="states-label">Estados</div>${stateItems}</div>`;
+        }
+      }
+      const lockBadge = lockedInstance ? `<span class="cc-badge" style="margin-left:6px;background:#f4d97a">${lockedInstance.displayIndex || 1}</span>` : '';
       targetHTML = `<div id="aohud-target-card">
         <div class="row">
           <div class="ava">${emoji}</div>
           <div class="info">
-            <div class="tname">${escHtml(currentTarget.name)}</div>
+            <div class="tname">${escHtml(currentTarget.name)}${lockBadge}</div>
             <div class="sub">${dmgInfo}</div>
             ${dbSubLine}
           </div>
@@ -1334,37 +1716,36 @@
 
     let activeHTML = '';
     const now = Date.now();
-    const mobsWithStates = [...entities.values()]
-      .filter(e => e.kind === 'npc' && !e.dead && e.stateTimers && e.stateTimers.size > 0)
-      .map(e => {
-        const states = [...e.stateTimers.entries()].map(([state, castAt]) => {
-          const dur = getStateDuration(state);
-          const remain = dur ? Math.max(0, dur - (now - castAt) / 1000) : null;
-          return { state, castAt, remain, dur };
-        });
-        const earliestRemain = Math.min(...states.map(s => s.remain ?? Infinity));
-        return { ...e, statesList: states, earliestRemain };
-      })
-      .sort((a, b) => a.earliestRemain - b.earliestRemain);
+    // Per-instance CC tracking: each cast has its own timer. Multi-target safe.
+    // Filter out expired (with 5s grace beyond duration).
+    const activeCCs = myCCInstances
+      .map(c => ({ ...c, remain: c.duration - (now - c.castAt) / 1000 }))
+      .filter(c => c.remain > -5)
+      .sort((a, b) => a.remain - b.remain);
 
-    if (mobsWithStates.length > 0) {
+    if (activeCCs.length > 0) {
+      // v1.11: cuántas instancias activas de cada nombre (para decidir si mostrar número)
+      const totalByName = {};
+      for (const c of activeCCs) totalByName[c.name] = (totalByName[c.name] || 0) + 1;
+
       activeHTML = `<div class="active-section">
-        <div class="as-title">Estados activos</div>
-        ${mobsWithStates.map(m => {
-          const isTarget = currentTarget && currentTarget.name === m.name ? 'is-target' : '';
-          const urgent = m.earliestRemain !== Infinity && m.earliestRemain < 5 ? 'urgent' : '';
-          const hpTxt = m.maxHp > 0 ? `${m.hp}/${m.maxHp}` : '';
-          const statesText = m.statesList.map(s => {
-            const ico = getStateIcon(s.state);
-            const time = s.remain !== null ? fmtTime(s.remain) : '<span style="color:#8a7a5a">?</span>';
-            return `<span style="white-space:nowrap">${ico}${time}</span>`;
-          }).join('');
-          return `<div class="am-item ${urgent} ${isTarget}" data-name="${escHtml(m.name)}">
-            <span class="am-emoji">${getMobEmoji(m.name)}</span>
-            <span class="am-name">${escHtml(m.name)}</span>
-            <span class="am-hp">${hpTxt}</span>
-            <span class="am-dismiss" data-dismiss="${escHtml(m.name)}" title="Descartar estados">✕</span>
-            <div class="am-states">${statesText}</div>
+        <div class="as-title">Estados activos (${activeCCs.length})</div>
+        ${activeCCs.map(c => {
+          const isLocked = currentTarget && currentTarget.ccInstanceId === c.id ? 'is-locked' : '';
+          const isTargetByName = !isLocked && currentTarget && currentTarget.name === c.name && !currentTarget.ccInstanceId ? 'is-target' : '';
+          const urgent = c.remain < 5 ? 'urgent' : '';
+          const ico = getStateIcon(c.state);
+          const time = c.remain > 0 ? fmtTime(c.remain) : '<span style="color:#a01818">EXP</span>';
+          // Color rotando por displayIndex (estable durante la vida de la instancia)
+          const colorIdx = ((c.displayIndex || 1) - 1) % CC_COLORS.length;
+          // Badge con número visible solo cuando hay 2+ del mismo nombre
+          const badge = totalByName[c.name] > 1 ? `<span class="cc-badge">${c.displayIndex || 1}</span>` : '';
+          return `<div class="am-item cc-c${colorIdx} ${urgent} ${isLocked} ${isTargetByName}" data-cc-id="${c.id}" data-name="${escHtml(c.name)}">
+            <span class="am-emoji">${getMobEmoji(c.name)}</span>
+            <span class="am-name">${badge}${escHtml(c.name)}</span>
+            <span class="am-hp"></span>
+            <span class="am-dismiss" data-dismiss-cc="${c.id}" title="Descartar este CC">✕</span>
+            <div class="am-states"><span style="white-space:nowrap">${ico}${time}</span></div>
           </div>`;
         }).join('')}
       </div>`;
@@ -1436,6 +1817,60 @@
       } else {
         content = sections;
       }
+    } else if (currentTab === 'macros') {
+      const renderToggle = (id, on, name, sub, ico, modClass = '', disabled = false) => `
+        <button class="m-btn ${modClass} ${on ? 'on' : ''}" id="${id}" type="button"${disabled ? ' disabled' : ''}>
+          <span class="m-ico">${ico}</span>
+          <div class="m-info">
+            <span class="m-name">${on ? 'PARAR ' + name : name}</span>
+            <span class="m-key">${sub}</span>
+          </div>
+        </button>`;
+
+      const renderThreshRow = (lbl, values, currentVal, dataAttr) => `
+        <div class="m-speed-row">
+          <span class="m-speed-lbl">${lbl}</span>
+          ${values.map(v => `<button class="m-thresh-btn ${Math.abs(currentVal - v) < 0.001 ? 'active' : ''}" data-${dataAttr}="${v}" type="button">${Math.round(v * 100)}%</button>`).join('')}
+        </div>`;
+
+      let html = '';
+
+      // === COMBATE: auto-attack ===
+      html += '<div class="m-title">Combate</div>';
+      html += renderToggle('ahm-aa-btn', autoAttackEnabled, 'AUTO-ATAQUE', `SPACE · cada ${autoAttackDelayMs}ms`, '⚔', 'm-aa');
+
+      // Slider continuo para velocidad de auto-ataque (v1.11: min ahora 0)
+      html += `<div class="m-slider-row">
+        <span class="m-slider-lbl">Velocidad</span>
+        <input type="range" class="m-slider" id="ahm-aa-slider"
+          min="0" max="2000" step="50" value="${autoAttackDelayMs}" />
+        <span class="m-slider-val" id="ahm-aa-slider-val">${autoAttackDelayMs}ms</span>
+      </div>`;
+
+      // v1.11: presets rápidos
+      const PRESETS = [0, 100, 200, 400, 800, 1200];
+      html += `<div class="m-preset-row">
+        ${PRESETS.map(p => `<button class="m-preset-btn ${p === autoAttackDelayMs ? 'active' : ''}" data-preset-ms="${p}" type="button">${p}</button>`).join('')}
+      </div>`;
+
+      // Medición del arma (info + atajo "Usar")
+      if (measuredAttackIntervalMs) {
+        const safeMs = measuredAttackIntervalMs + 30;
+        html += `<div class="m-measure-row">
+          <span class="m-measure-lbl">Medido: <b>${measuredAttackIntervalMs}ms</b> (${attackIntervalSamples.length} golpes)</span>
+          <button class="m-use-measured" data-ms="${safeMs}" type="button">Usar ${safeMs}ms</button>
+          <button class="m-reset-measured" type="button" title="Resetear medición">↻</button>
+        </div>`;
+      } else {
+        html += `<div class="m-hint" style="margin:2px 0 8px">Pegale a algo 3-4 veces seguidas y voy a medir tu cadencia real del arma.</div>`;
+      }
+
+      // v1.11: Auto-renovar Celeridad (piloto)
+      html += '<div class="m-title">Buffs</div>';
+      html += renderToggle('ahm-renew-btn', autoRenewCeleridadEnabled, 'AUTO-RENOVAR CELERIDAD', `Tecla 1 + click centro · <${AUTO_RENEW_THRESHOLD_S}s`, '🌀', 'm-renew');
+      html += `<div class="m-hint" style="margin:2px 0 8px">Piloto: cuando Celeridad esté por expirar, simula tecla 1 + click sobre tu PJ (centro canvas).</div>`;
+
+      content = html;
     } else if (currentTab === 'stats') {
       const elapsedMs = Date.now() - session.startedAt;
       const elapsedHours = elapsedMs / 3600000;
@@ -1534,20 +1969,107 @@
     body.querySelectorAll('.am-dismiss').forEach(btn => {
       btn.addEventListener('click', (ev) => {
         ev.stopPropagation();
-        const name = btn.getAttribute('data-dismiss');
-        const ent = entities.get(name);
-        if (ent) {
-          if (ent.stateTimers) ent.stateTimers.clear();
-          if (ent.states) ent.states.clear();
+        const ccId = btn.getAttribute('data-dismiss-cc');
+        if (ccId) {
+          // Remove specific CC instance by id
+          const idx = myCCInstances.findIndex(c => c.id === +ccId);
+          if (idx !== -1) myCCInstances.splice(idx, 1);
+        } else {
+          // Legacy: clear all states for a mob (still useful from target card)
+          const name = btn.getAttribute('data-dismiss');
+          const ent = entities.get(name);
+          if (ent) {
+            if (ent.stateTimers) ent.stateTimers.clear();
+            if (ent.states) ent.states.clear();
+          }
+          // Also clean instances matching that name
+          for (let i = myCCInstances.length - 1; i >= 0; i--) {
+            if (myCCInstances[i].name === name) myCCInstances.splice(i, 1);
+          }
         }
         renderManual();
       });
     });
     body.querySelectorAll('.am-item, .mob-entry').forEach(el => {
       el.addEventListener('click', () => {
+        // v1.11: si la card tiene data-cc-id, lockear a esa instancia específica
+        const ccId = el.getAttribute('data-cc-id');
         const name = el.getAttribute('data-name');
-        if (name) setCurrentTarget(name);
+        if (ccId) {
+          setCurrentTargetByCC(+ccId);
+        } else if (name) {
+          setCurrentTarget(name);
+        }
       });
+    });
+    // Macros tab handlers — blur after click so Space (auto-attack) doesn't re-trigger focused button
+    const aaBtn = body.querySelector('#ahm-aa-btn');
+    if (aaBtn) aaBtn.addEventListener('click', () => { setAutoAttack(!autoAttackEnabled); aaBtn.blur(); });
+    body.querySelectorAll('.m-speed-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        autoAttackDelayMs = +b.getAttribute('data-speed') || 800;
+        try { localStorage.setItem('aoweb-hud-aaspeed', String(autoAttackDelayMs)); } catch(e) {}
+        if (autoAttackEnabled) { setAutoAttack(false); setAutoAttack(true); }
+        else renderManual();
+        b.blur();
+      });
+    });
+    const useMeasured = body.querySelector('.m-use-measured');
+    if (useMeasured) {
+      useMeasured.addEventListener('click', () => {
+        const ms = +useMeasured.getAttribute('data-ms');
+        if (ms >= 300 && ms <= 3000) {
+          autoAttackDelayMs = ms;
+          try { localStorage.setItem('aoweb-hud-aaspeed', String(ms)); } catch(e) {}
+          if (autoAttackEnabled) { setAutoAttack(false); setAutoAttack(true); }
+          else renderManual();
+          showToast('Velocidad ajustada', `Auto-ataque a ${ms}ms (medido del arma)`, '⚙', 'learned');
+        }
+        useMeasured.blur();
+      });
+    }
+    const resetMeasured = body.querySelector('.m-reset-measured');
+    if (resetMeasured) {
+      resetMeasured.addEventListener('click', () => {
+        attackIntervalSamples.length = 0;
+        measuredAttackIntervalMs = null;
+        lastMeleeHitAt = 0;
+        renderManual();
+        resetMeasured.blur();
+      });
+    }
+    // Slider de velocidad auto-ataque
+    const slider = body.querySelector('#ahm-aa-slider');
+    const sliderVal = body.querySelector('#ahm-aa-slider-val');
+    if (slider) {
+      slider.addEventListener('input', () => {
+        autoAttackDelayMs = +slider.value;
+        if (sliderVal) sliderVal.textContent = autoAttackDelayMs + 'ms';
+      });
+      slider.addEventListener('change', () => {
+        try { localStorage.setItem('aoweb-hud-aaspeed', String(autoAttackDelayMs)); } catch(e) {}
+        if (autoAttackEnabled) { setAutoAttack(false); setAutoAttack(true); }
+        else { renderManual(); refreshStickyAA(); }
+        slider.blur();
+      });
+    }
+    // v1.11: presets de velocidad
+    body.querySelectorAll('.m-preset-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        const ms = +b.getAttribute('data-preset-ms');
+        if (isNaN(ms) || ms < 0 || ms > 2000) return;
+        autoAttackDelayMs = ms;
+        try { localStorage.setItem('aoweb-hud-aaspeed', String(ms)); } catch(e) {}
+        if (autoAttackEnabled) { setAutoAttack(false); setAutoAttack(true); }
+        else { renderManual(); refreshStickyAA(); }
+        b.blur();
+      });
+    });
+    // v1.11: toggle de auto-renovar Celeridad
+    const renewBtn = body.querySelector('#ahm-renew-btn');
+    if (renewBtn) renewBtn.addEventListener('click', () => {
+      setAutoRenewCeleridad(!autoRenewCeleridadEnabled);
+      renewBtn.blur();
     });
   }
 
@@ -1607,8 +2129,33 @@
       ent = { name, kind: 'npc', hp: 0, maxHp: 0, lastSeen: Date.now(), count: 1, states: new Set(), stateTimers: new Map() };
       entities.set(name, ent);
     }
-    if (currentTarget?.name === name) currentTarget.lastSeen = Date.now();
-    else currentTarget = { name: ent.name, kind: ent.kind, hp: ent.hp || 0, maxHp: ent.maxHp || 0, lastSeen: Date.now() };
+    if (currentTarget?.name === name) {
+      currentTarget.lastSeen = Date.now();
+      // v1.11: switching to target by name clears any prior CC lock
+      currentTarget.ccInstanceId = null;
+    } else {
+      currentTarget = { name: ent.name, kind: ent.kind, hp: ent.hp || 0, maxHp: ent.maxHp || 0, lastSeen: Date.now(), ccInstanceId: null };
+    }
+    renderManual();
+    if (targetTimeoutId) clearTimeout(targetTimeoutId);
+    targetTimeoutId = setTimeout(() => {
+      if (Date.now() - lastCombatAt > COMBAT_RECENT_MS) { currentTarget = null; renderManual(); }
+    }, TARGET_TIMEOUT_MS);
+  }
+
+  // v1.11: lock the target to a specific CC instance (Oso 1 vs Oso 2 con timers separados)
+  function setCurrentTargetByCC(ccId) {
+    const inst = myCCInstances.find(c => c.id === ccId);
+    if (!inst) return;
+    let ent = entities.get(inst.name);
+    if (!ent) {
+      ent = { name: inst.name, kind: 'npc', hp: 0, maxHp: 0, lastSeen: Date.now(), count: 1, states: new Set(), stateTimers: new Map() };
+      entities.set(inst.name, ent);
+    }
+    currentTarget = {
+      name: ent.name, kind: ent.kind, hp: ent.hp || 0, maxHp: ent.maxHp || 0,
+      lastSeen: Date.now(), ccInstanceId: ccId,
+    };
     renderManual();
     if (targetTimeoutId) clearTimeout(targetTimeoutId);
     targetTimeoutId = setTimeout(() => {
@@ -1739,15 +2286,31 @@
       showSpellFlash(spell);
       const stateName = SPELL_TO_STATE[spell];
       if (stateName) {
+        // Per-instance: each cast creates its own timer for multi-target scenarios
+        const duration = getStateDuration(stateName) || 50;
+        // v1.11: displayIndex estable = 1 + cantidad de instancias vivas con mismo nombre
+        const aliveSameName = myCCInstances.filter(c => c.name === target && (Date.now() - c.castAt) / 1000 < c.duration + 5);
+        const usedIndexes = new Set(aliveSameName.map(c => c.displayIndex || 1));
+        let displayIndex = 1;
+        while (usedIndexes.has(displayIndex)) displayIndex++;
+        const newId = myCCNextId++;
+        myCCInstances.push({
+          id: newId, name: target, state: stateName,
+          castAt: Date.now(), duration, displayIndex,
+        });
+        if (myCCInstances.length > 30) myCCInstances.shift();
+
+        // Also update the entity record (used by target card)
         const ent = entities.get(target);
         if (ent) {
           if (!ent.stateTimers) ent.stateTimers = new Map();
           ent.stateTimers.set(stateName, Date.now());
           if (!ent.states) ent.states = new Set();
           ent.states.add(stateName);
-          ensureBuffTicker();
-          renderManual();
         }
+        // v1.11: auto-lock al CC recién lanzado (el último cast siempre es el target activo)
+        setCurrentTargetByCC(newId);
+        ensureBuffTicker();
       }
     }
   }
@@ -1791,6 +2354,19 @@
     const spellRecent = lastOffensiveSpell && (Date.now() - lastOffensiveSpellAt < 3000);
     const spellIcon = spellRecent ? (SPELL_ICONS[lastOffensiveSpell] || '') : '';
     if (spellRecent) { lastOffensiveSpell = null; lastOffensiveSpellAt = 0; }
+    // Measure weapon attack interval from consecutive melee hits (not spells)
+    if (!spellIcon) {
+      const nowHit = Date.now();
+      if (lastMeleeHitAt > 0) {
+        const gap = nowHit - lastMeleeHitAt;
+        if (gap >= 300 && gap <= 4000) {
+          attackIntervalSamples.push(gap);
+          if (attackIntervalSamples.length > ATTACK_SAMPLES_MAX) attackIntervalSamples.shift();
+          measuredAttackIntervalMs = Math.min(...attackIntervalSamples);
+        }
+      }
+      lastMeleeHitAt = nowHit;
+    }
     const fctKind = spellIcon ? 'spell' : (isCrit ? 'crit' : 'dealt');
     showFCT(spellIcon ? `${spellIcon} -${damage}` : `-${damage}`, fctKind);
     renderManual();
@@ -1927,6 +2503,10 @@
         } else if (remain > BUFF_ALERT_THRESHOLD) {
           buffAlertedSet.delete(name);
         }
+        // v1.11: auto-renovar Celeridad cuando <5s
+        if (autoRenewCeleridadEnabled && name === 'Celeridad' && remain > 0 && remain < AUTO_RENEW_THRESHOLD_S) {
+          autoRenewCeleridad();
+        }
       }
       if (buffAlertNeeded) playBuffAlert();
 
@@ -1960,10 +2540,17 @@
         if (e.dead && (!e.stateTimers || e.stateTimers.size === 0)) entities.delete(name);
       }
 
+      // Cleanup expired CC instances (10s grace beyond duration)
+      for (let i = myCCInstances.length - 1; i >= 0; i--) {
+        const c = myCCInstances[i];
+        if ((now - c.castAt) / 1000 > c.duration + 10) myCCInstances.splice(i, 1);
+      }
+      const anyCCActive = myCCInstances.some(c => (now - c.castAt) / 1000 < c.duration);
+
       renderSelfBuffs();
       renderPlayerFrame();
       renderManual();
-      if (activeBuffs.size === 0 && !anyActiveState) { clearInterval(buffTickerId); buffTickerId = null; }
+      if (activeBuffs.size === 0 && !anyActiveState && !anyCCActive) { clearInterval(buffTickerId); buffTickerId = null; }
     }, 500);
   }
 
@@ -2072,6 +2659,29 @@
       });
     });
 
+    // v1.11: Sticky auto-attack toggle (siempre visible)
+    const stickyAA = document.getElementById('aohud-aa-sticky');
+    stickyAA.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setAutoAttack(!autoAttackEnabled);
+    });
+    refreshStickyAA();
+
+    // v1.11: Double-tap Space → toggle auto-attack (capture phase, no preventDefault)
+    window.addEventListener('keydown', (e) => {
+      if (e.code !== 'Space' && e.keyCode !== 32) return;
+      if (e.repeat) return;
+      const ae = document.activeElement;
+      if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+      const now = Date.now();
+      if (now - lastSpaceAt < DOUBLE_TAP_MS && now !== lastSpaceAt) {
+        setAutoAttack(!autoAttackEnabled);
+        lastSpaceAt = 0;
+      } else {
+        lastSpaceAt = now;
+      }
+    }, true);
+
     // Collapse toggle
     panel.querySelector('.player-header').addEventListener('click', (e) => {
       if (e.target.closest('.avatar-wrap')) return;
@@ -2172,6 +2782,10 @@
 
     // Load AO head sprites for avatar
     loadHeadData();
+    // Load user macros from API (for the Macros tab)
+    fetchPlayerMacros();
+    // Re-sync macros every 30s in case user changes them in-game
+    setInterval(fetchPlayerMacros, 30000);
 
     globalObs = new MutationObserver(muts => {
       if (observerActive) { globalObs.disconnect(); return; }
@@ -2198,5 +2812,5 @@
   if (document.body) init();
   else window.addEventListener('DOMContentLoaded', init);
 
-  console.log('%c[AOWeb HUD v1.5] wiki maps · mana · drops · session history · re-buff alerts', 'color:#d4a857;font-weight:bold;font-family:serif');
+  console.log('%c[AOWeb HUD v1.11] sticky auto-ataque · double-tap Space · multi-CC click-to-lock · auto-renovar Celeridad piloto', 'color:#d4a857;font-weight:bold;font-family:serif');
 })();
