@@ -2,7 +2,7 @@
 
 > Userscript Tampermonkey para el cliente web de **Argentum Online** ([aoweb.app](https://aoweb.app)) por Damián Catanzaro. Inyecta un overlay con **bestiario** (wiki live), **panel unificado**, **target frame**, **buff icons sobre PJ**, **sistema genérico de aprendizaje de estados**, y **auto-detect de PJ** (nombre, clase, nivel, head sprite) vía API REST del juego.
 
-**Estado actual:** v1.6 — funcional en producción (~2200 líneas). Compartible para el clan: auto-setup sin configuración manual.
+**Estado actual:** v1.11 — funcional en producción (~2700 líneas). Compartible para el clan: auto-setup sin configuración manual.
 
 **⚠ Drift de documentación corregido (v1.6):** versiones previas de CLAUDE.md decían que existían macros (DESPAR + ATK) desde v1.0. Verificado en código v1.5: **nunca se implementaron** o se removieron. La feature queda como pendiente, no como existente.
 
@@ -28,6 +28,8 @@
 - `aoweb-hud-charid` — `_id` del character activo (para detectar cambio de PJ y re-aplicar head)
 - `aoweb-hud-panelpos` — posición del panel del HUD
 - `aoweb-hud-sound` — toggle de alertas sonoras
+- `aoweb-hud-aaspeed` — velocidad de auto-ataque en ms (0-2000)
+- `aoweb-hud-autorenew` — toggle de auto-renovar Celeridad ("1" / "0")
 
 **No build step. No npm install. Vanilla JS.**
 
@@ -501,6 +503,7 @@ box-shadow:
 | 1.9.3 | **Multi-target CC tracking** | Antes, dos "Gran Águila" paralizadas compartían UN timer porque `entities` se keyea por nombre. Ahora cada cast crea su propio entry en `myCCInstances[]`. La sección "Estados activos" itera esa lista — si tenés 3 Gran Águilas paralizadas, ves 3 timers (etiquetadas #1, #2, #3 cuando el nombre se repite). Cleanup automático 10s después de expirar. Dismiss button por-instancia (`data-dismiss-cc`). |
 | 1.9.4 | **Auto-detect del intervalo del arma** | Mide el gap entre golpes melee consecutivos exitosos (excluye spells). Toma min de los últimos 10 samples. Muestra "Medido: Xms (N golpes)" en el tab MACROS + botón "Usar Xms" (aplica +30ms safety margin). Botón reset para cuando cambies de arma. Resuelve la pregunta "¿cuál es la velocidad real de mi arma?" — el HUD la descubre solo. |
 | 1.10 | **Limpieza grande: solo Auto-Ataque** | Removidos Auto-Renovar (self-buff con click sintético sobre PJ no funcionó en tests) y Auto-Desparalizar (untested). También removido el helper `dispatchSelfBuff`, constant `SELF_BUFFS`, funciones `findHealMacro/findMeditarMacro/findDesparaMacro/getBuffMacroOptions/getBuffRemainingS/findMacroByLabel/setAutoRenew/setAutoDespara`. Tab MACROS ahora tiene SOLO: Auto-Ataque toggle + slider continuo de velocidad (300-2000ms, step 50ms) + medición del arma con botón "Usar Xms". Pendientes para futuro: re-implementar auto-renovar cuando descubramos cómo hacer self-targeting correctamente. |
+| 1.11 | **Sticky Auto-Ataque · double-tap Space · multi-CC click-to-lock · auto-renovar Celeridad piloto** | (a) Toggle Auto-Ataque movido a franja sticky arriba del panel — fija independiente del tab y de la cantidad de CC activos (UX para clan, no se mueve). (b) Slider de velocidad ahora `min=0` (antes 300) + fila de presets clickables 0/100/200/400/800/1200ms. (c) Listener global `keydown` capture: dos taps de Space en <300ms toggle Auto-Ataque (ignora input/textarea/contenteditable focused, no preventDefault). (d) Multi-target CC re-trabajado: cada instancia tiene `displayIndex` estable + borde de color rotando (5 colores) + badge con número cuando hay 2+ del mismo nombre + click-to-lock por instancia (`currentTarget.ccInstanceId`). Al lanzar un CC nuevo, esa instancia se auto-lockea como target activo. La ficha grande del target muestra el timer DE LA INSTANCIA lockeada, no del agregado por nombre. (e) Auto-renovar Celeridad (piloto, off por default, key `aoweb-hud-autorenew`): cuando Celeridad <5s, dispatch tecla `1` + 80ms wait + synthetic `pointerdown/mousedown/pointerup/mouseup/click` al centro del canvas (PJ siempre ahí). Cooldown 8s. Logging detallado con prefijo `[AOWeb HUD][auto-renew]` para debug. Si funciona, extender a Fuerza/Bendición/Inteligencia en v1.12. |
 
 ---
 
