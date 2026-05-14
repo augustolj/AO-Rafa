@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         AOWeb HUD
+// @name         La Pluginetta
 // @namespace    achalay.aoweb
 // @version      1.12
 // @description  Auto-Ataque fijo arriba (sticky) + double-tap Space para toggle + slider desde 0ms con presets + multi-target CC con click-to-lock y colores por instancia + auto-renovar Celeridad piloto.
