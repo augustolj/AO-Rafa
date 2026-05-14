@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AOWeb HUD
 // @namespace    achalay.aoweb
-// @version      1.11
+// @version      1.12
 // @description  Auto-Ataque fijo arriba (sticky) + double-tap Space para toggle + slider desde 0ms con presets + multi-target CC con click-to-lock y colores por instancia + auto-renovar Celeridad piloto.
 // @match        https://aoweb.app/play
 // @run-at       document-start
@@ -1036,7 +1036,11 @@
     /* Footer */
     #aohud-panel .footer { padding: 6px 14px;
       border-top: 1px solid rgba(106, 74, 24, 0.6);
-      display: flex; align-items: center; justify-content: space-between; }
+      display: flex; flex-direction: column; gap: 6px; }
+    #aohud-panel .footer-row { display: flex; align-items: center; justify-content: space-between; }
+    #aohud-panel .opacity-row { display: flex; align-items: center; gap: 8px; }
+    #aohud-panel .opacity-row label { font-family: 'IM Fell English', serif; font-size: 11px; color: #8a7a5a; white-space: nowrap; }
+    #aohud-panel .opacity-row input[type=range] { flex: 1; height: 4px; accent-color: #d4a857; cursor: pointer; }
     #aohud-panel .footer .stat { font-family: 'Press Start 2P', monospace;
       font-size: 8px; color: #8a7a5a; letter-spacing: -0.5px; }
     #aohud-panel .footer .sound-toggle { cursor: pointer; font-size: 16px;
@@ -1318,8 +1322,14 @@
     </div>
     <div class="body" id="manual-body"></div>
     <div class="footer">
-      <span class="stat" id="stat-ws">0 ws</span>
-      <span class="sound-toggle" id="aohud-sound-toggle" title="Alarmas de estado">🔔</span>
+      <div class="footer-row">
+        <span class="stat" id="stat-ws">0 ws</span>
+        <span class="sound-toggle" id="aohud-sound-toggle" title="Alarmas de estado">🔔</span>
+      </div>
+      <div class="opacity-row">
+        <label for="aohud-opacity">Opacidad</label>
+        <input type="range" id="aohud-opacity" min="10" max="100" step="5" value="75">
+      </div>
     </div>
   `;
 
@@ -2771,6 +2781,17 @@
       localStorage.setItem('aoweb-hud-sound', soundAlertsEnabled ? 'on' : 'off');
       soundToggle.textContent = soundAlertsEnabled ? '🔔' : '🔕';
       soundToggle.classList.toggle('muted', !soundAlertsEnabled);
+    });
+
+    const opacitySlider = document.getElementById('aohud-opacity');
+    const savedOpacity = +localStorage.getItem('aoweb-hud-opacity') || 75;
+    opacitySlider.value = savedOpacity;
+    panel.style.opacity = (savedOpacity / 100).toFixed(2);
+    opacitySlider.addEventListener('input', (e) => {
+      e.stopPropagation();
+      const val = +e.target.value;
+      panel.style.opacity = (val / 100).toFixed(2);
+      localStorage.setItem('aoweb-hud-opacity', val);
     });
 
     renderManual(); renderPlayerFrame(); updateFooter();
