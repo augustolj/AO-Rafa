@@ -6,6 +6,8 @@
 // @match        https://aoweb.app/play
 // @run-at       document-start
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/augustolj/AO-Rafa/main/src/aoweb-hud.user.js
+// @downloadURL  https://raw.githubusercontent.com/augustolj/AO-Rafa/main/src/aoweb-hud.user.js
 // ==/UserScript==
 
 (function () {
