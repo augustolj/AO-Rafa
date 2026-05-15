@@ -122,6 +122,8 @@
   let sessionHistory = [];
   try { sessionHistory = JSON.parse(localStorage.getItem('aoweb-hud-sessions') || '[]'); } catch (e) {}
 
+  const SCRIPT_VERSION = '1.23';
+
   const STALE_MS = 60000;
   const TARGET_TIMEOUT_MS = 12000;
   const COMBAT_RECENT_MS = 5000;
@@ -1116,7 +1118,10 @@
 
     /* Player header compacto */
     #aohud-panel .player-header { display: flex; align-items: center; gap: 10px;
-      padding: 14px 16px; border-bottom: 1px solid rgba(106, 74, 24, 0.6); }
+      padding: 14px 16px; border-bottom: 1px solid rgba(106, 74, 24, 0.6); position: relative; }
+    #aohud-panel .version-badge { position: absolute; top: 6px; right: 8px;
+      font-family: 'Press Start 2P', monospace; font-size: 7px; color: #6a5a3a;
+      letter-spacing: 0; pointer-events: none; }
     #aohud-panel .player-header .avatar-wrap { position: relative; width: 52px; height: 52px;
       flex-shrink: 0; cursor: pointer; }
     #aohud-panel .player-header .avatar { width: 52px; height: 52px; border-radius: 50%;
@@ -1761,6 +1766,7 @@
   panel.id = 'aohud-panel';
   panel.innerHTML = `
     <div class="player-header">
+      <span class="version-badge">v${SCRIPT_VERSION}</span>
       <div class="avatar-wrap">
         <div class="avatar" id="player-avatar"></div>
       </div>
