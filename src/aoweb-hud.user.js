@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         La Pluginetta
 // @namespace    achalay.aoweb
-// @version      1.23
+// @version      1.24
 // @description  Auto-Ataque fijo arriba (sticky) + double-tap Space para toggle + slider desde 0ms con presets + multi-target CC con click-to-lock y colores por instancia + auto-renovar Celeridad piloto.
 // @match        https://aoweb.app/play
 // @run-at       document-start
@@ -121,6 +121,8 @@
 
   let sessionHistory = [];
   try { sessionHistory = JSON.parse(localStorage.getItem('aoweb-hud-sessions') || '[]'); } catch (e) {}
+
+  const SCRIPT_VERSION = '1.23';
 
   const STALE_MS = 60000;
   const TARGET_TIMEOUT_MS = 12000;
@@ -1116,7 +1118,17 @@
 
     /* Player header compacto */
     #aohud-panel .player-header { display: flex; align-items: center; gap: 10px;
-      padding: 14px 16px; border-bottom: 1px solid rgba(106, 74, 24, 0.6); }
+      padding: 14px 16px; border-bottom: 1px solid rgba(106, 74, 24, 0.6); position: relative; }
+    #aohud-panel .version-badge { position: absolute; top: 6px; right: 8px;
+      font-family: 'Press Start 2P', monospace; font-size: 7px; color: #6a5a3a;
+      letter-spacing: 0; pointer-events: none; }
+    #aohud-minimize { position: absolute; top: -10px; right: -10px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #1c160e; border: 1px solid #8a6a2a;
+      color: #d4a857; font-size: 12px; line-height: 22px; text-align: center;
+      cursor: pointer; z-index: 10001; user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6); transition: all 0.15s; }
+    #aohud-minimize:hover { background: #2a1e0e; border-color: #d4a857; transform: scale(1.15); }
     #aohud-panel .player-header .avatar-wrap { position: relative; width: 52px; height: 52px;
       flex-shrink: 0; cursor: pointer; }
     #aohud-panel .player-header .avatar { width: 52px; height: 52px; border-radius: 50%;
@@ -1760,7 +1772,9 @@
   const panel = document.createElement('div');
   panel.id = 'aohud-panel';
   panel.innerHTML = `
+    <div id="aohud-minimize" title="Minimizar">−</div>
     <div class="player-header">
+      <span class="version-badge">v${SCRIPT_VERSION}</span>
       <div class="avatar-wrap">
         <div class="avatar" id="player-avatar"></div>
       </div>
@@ -3251,10 +3265,18 @@
       }
     }, true);
 
+    // Botón minimizar
+    document.getElementById('aohud-minimize').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const collapsed = panel.classList.toggle('collapsed');
+      e.target.textContent = collapsed ? '+' : '−';
+    });
+
     // Collapse toggle
     panel.querySelector('.player-header').addEventListener('click', (e) => {
       if (e.target.closest('.avatar-wrap')) return;
-      panel.classList.toggle('collapsed');
+      const collapsed = panel.classList.toggle('collapsed');
+      document.getElementById('aohud-minimize').textContent = collapsed ? '+' : '−';
     });
     // Head picker on avatar click
     panel.querySelector('.avatar-wrap').addEventListener('click', (e) => {
