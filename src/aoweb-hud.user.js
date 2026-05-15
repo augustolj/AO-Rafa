@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         La Pluginetta
 // @namespace    achalay.aoweb
-// @version      1.12
+// @version      1.23
 // @description  Auto-Ataque fijo arriba (sticky) + double-tap Space para toggle + slider desde 0ms con presets + multi-target CC con click-to-lock y colores por instancia + auto-renovar Celeridad piloto.
 // @match        https://aoweb.app/play
 // @run-at       document-start
@@ -12,6 +12,52 @@
 
 (function () {
   'use strict';
+
+  // ===== v1.20: hook canvas fillText para capturar HP/MP (canvas-rendered por el juego) =====
+  // El motor del juego dibuja "207/207" y "748/1050" como text en un canvas chico (no DOM).
+  // Interceptamos fillText globalmente y guardamos los pares N/N que veamos, discriminando HP vs MP por Y.
+  window.__aohudHP = null;
+  window.__aohudMP = null;
+  (function hookCanvasText() {
+    try {
+      const proto = CanvasRenderingContext2D.prototype;
+      const origFillText = proto.fillText;
+      const origStrokeText = proto.strokeText;
+      let pendingFrame = [];
+      let frameTimer = null;
+      function record(text, y) {
+        const t = String(text).trim();
+        const m = t.match(/^(\d+)\s*\/\s*(\d+)$/);
+        if (!m) return;
+        const cur = +m[1], max = +m[2];
+        if (max < 100 || max > 100000) return; // filtrar inventario "3/5", "4/9"
+        pendingFrame.push({ cur, max, y: y || 0 });
+        if (!frameTimer) {
+          frameTimer = setTimeout(() => {
+            // Agrupar por Y, ordenar ASC → primero HP (arriba), después MP (abajo)
+            const sorted = [...pendingFrame].sort((a, b) => a.y - b.y);
+            const uniqueByY = [];
+            const seenY = new Set();
+            for (const p of sorted) {
+              const yKey = Math.round(p.y / 5) * 5;
+              if (!seenY.has(yKey)) { seenY.add(yKey); uniqueByY.push(p); }
+            }
+            if (uniqueByY.length >= 2) {
+              window.__aohudHP = uniqueByY[0];
+              window.__aohudMP = uniqueByY[1];
+            } else if (uniqueByY.length === 1) {
+              window.__aohudHP = uniqueByY[0];
+            }
+            pendingFrame = [];
+            frameTimer = null;
+          }, 40);
+        }
+      }
+      proto.fillText = function(text, x, y) { record(text, y); return origFillText.apply(this, arguments); };
+      proto.strokeText = function(text, x, y) { record(text, y); return origStrokeText.apply(this, arguments); };
+      console.log('[AOWeb HUD] canvas fillText hook installed');
+    } catch (e) { console.warn('[AOWeb HUD] canvas hook failed:', e); }
+  })();
 
   // ===== FIX fullscreen (de v0.4.1) =====
   const origRF = HTMLElement.prototype.requestFullscreen;
@@ -290,7 +336,234 @@
   let lastAutoRenewAt = 0;
   const AUTO_RENEW_COOLDOWN_MS = 8000;
   const AUTO_RENEW_THRESHOLD_S = 5;
-  const CELERIDAD_MACRO_KEY = 'Digit1'; // v1.11: hardcoded tecla 1
+
+  // v1.16: pantalla limpia + embed panel — mueve el panel derecho DENTRO de nuestro HUD
+  // (HP/MP/inventario/hechizos/minimap quedan accesibles sin perder el mapa grande)
+  let cleanScreenEnabled = false;
+  try { cleanScreenEnabled = localStorage.getItem('aoweb-hud-cleanscreen') === '1'; } catch(e) {}
+  const CLEAN_SCREEN_SCALE = 1.30;
+  let embeddedRestore = null; // { parent, nextSibling } para restaurar posición original
+  function findRightPanelColumn() {
+    const personaje = [...document.querySelectorAll('*')].find(el => /^PERSONAJE$/i.test(el.textContent?.trim() || ''));
+    let col = personaje;
+    while (col && !/flex.*h-full.*flex-col.*gap-2.*text-stone/.test(col.className?.toString() || '')) {
+      col = col.parentElement;
+    }
+    return col;
+  }
+  // v1.20+v1.21: renderizar barras de VIDA/MANA propias (HTML/CSS) en el header, full-width
+  function renderCustomHpMpBars() {
+    const header = document.querySelector('#aohud-panel .player-header');
+    if (!header) return;
+    let wrap = document.getElementById('aohud-custom-bars');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'aohud-custom-bars';
+      wrap.className = 'aohud-full-width';
+      wrap.innerHTML = `
+        <div class="aohud-cb-row">
+          <span class="aohud-cb-label">VIDA</span>
+          <span class="aohud-cb-val" id="aohud-cb-hp-val">— / —</span>
+        </div>
+        <div class="aohud-cb-bar"><div class="aohud-cb-fill aohud-cb-hp-fill" id="aohud-cb-hp-fill"></div></div>
+        <div class="aohud-cb-row" style="margin-top:4px">
+          <span class="aohud-cb-label">MANÁ</span>
+          <span class="aohud-cb-val" id="aohud-cb-mp-val">— / —</span>
+        </div>
+        <div class="aohud-cb-bar"><div class="aohud-cb-fill aohud-cb-mp-fill" id="aohud-cb-mp-fill"></div></div>
+      `;
+      header.appendChild(wrap);
+    }
+    const hp = window.__aohudHP;
+    const mp = window.__aohudMP;
+    if (hp) {
+      document.getElementById('aohud-cb-hp-val').textContent = `${hp.cur} / ${hp.max}`;
+      const pct = Math.max(0, Math.min(100, (hp.cur / hp.max) * 100));
+      document.getElementById('aohud-cb-hp-fill').style.width = pct + '%';
+    }
+    if (mp) {
+      document.getElementById('aohud-cb-mp-val').textContent = `${mp.cur} / ${mp.max}`;
+      const pct = Math.max(0, Math.min(100, (mp.cur / mp.max) * 100));
+      document.getElementById('aohud-cb-mp-fill').style.width = pct + '%';
+    }
+  }
+
+  // v1.19: reorg interno — VIDA/MANA + Party/Clanes + oro VAN AL HEADER. Stats card queda solo con minimap grande.
+  function applyEmbedReorg(column) {
+    // 1) Identificar las 3 cards
+    const expLabel = [...column.querySelectorAll('*')].find(el => el.children.length === 0 && /^EXPERIENCIA$/i.test(el.textContent.trim()));
+    let personajeCard = expLabel;
+    while (personajeCard && !personajeCard.classList?.toString()?.includes('rounded-[22px]')) personajeCard = personajeCard.parentElement;
+
+    const lindosEl = [...column.querySelectorAll('*')].find(el => el.children.length === 0 && /Ciudad de Lindos|Ciudad de|^Mapa\s/i.test(el.textContent || ''));
+    let statsCard = lindosEl;
+    while (statsCard && !statsCard.classList?.toString()?.includes('rounded-[22px]')) statsCard = statsCard.parentElement;
+    if (!statsCard && column.children[2]?.classList?.toString()?.includes('rounded-[22px]')) statsCard = column.children[2];
+
+    // 2) Mover EXPERIENCIA al player-header como full-width
+    const header = document.querySelector('#aohud-panel .player-header');
+    if (expLabel && header) {
+      const expContainer = expLabel.parentElement?.parentElement;
+      if (expContainer && !header.contains(expContainer)) {
+        expContainer.classList.add('aohud-full-width');
+        expContainer.dataset.aohudMoved = '1';
+        header.appendChild(expContainer);
+      }
+    }
+
+    // 3) Ocultar PERSONAJE card (ya extrajimos EXP)
+    if (personajeCard) personajeCard.style.display = 'none';
+
+    // 4) Reorg stats card: mover VIDA/MANA + Party/Clanes Y oro AL HEADER de nuestro HUD (debajo de EXP).
+    //    Lo que queda en la stats card: Ciudad de Lindos + minimap GRANDE.
+    if (statsCard) {
+      const row = statsCard.children[1]; // mt-2 flex con leftCol(VIDA/MANA+Party/Clanes) y mapCol(minimap)
+      const goldRow = [...statsCard.children].find(c => c.className?.toString()?.includes('grid-cols-3'));
+
+      if (row && row.children.length === 2) {
+        const leftCol = row.children[0]; // canvas VIDA/MANA + Party/Clanes
+        const mapCol = row.children[1];  // minimap
+
+        // v1.20: ocultar el canvas del juego (lo reemplazamos con barras propias HTML)
+        if (leftCol) {
+          const canvasEl = leftCol.querySelector('canvas');
+          if (canvasEl) canvasEl.style.display = 'none';
+        }
+        // v1.20: render barras propias HTML en el header (debajo de EXP)
+        renderCustomHpMpBars();
+
+        // Mover Party/Clanes (sin el canvas) al header full-width
+        if (leftCol && header && !leftCol.dataset.aohudMoved) {
+          leftCol.classList.add('aohud-full-width');
+          leftCol.dataset.aohudMoved = '1';
+          header.appendChild(leftCol);
+        }
+        // Mover goldRow al header (después de leftCol)
+        if (goldRow && header && !goldRow.dataset.aohudMoved) {
+          goldRow.classList.add('aohud-full-width');
+          goldRow.style.fontSize = '11px';
+          goldRow.dataset.aohudMoved = '1';
+          header.appendChild(goldRow);
+        }
+
+        // mapCol queda en la stats card y toma todo el ancho — override agresivo
+        if (mapCol) {
+          // Row a block para que mapCol no esté limitado por flex
+          row.style.cssText = 'display: block !important; width: 100% !important; margin-top: 8px;';
+          // mapCol full width, remover TODAS las clases de Tailwind
+          mapCol.removeAttribute('class');
+          mapCol.style.cssText = 'display: block !important; width: 100% !important; max-width: none !important; min-width: 0 !important;';
+          const mapImg = mapCol.querySelector('img');
+          if (mapImg && !mapImg.dataset.aohudBig) {
+            mapImg.removeAttribute('width');
+            mapImg.removeAttribute('height');
+            mapImg.removeAttribute('class');
+            mapImg.style.cssText = 'display: block !important; width: 100% !important; height: auto !important; aspect-ratio: 1 / 1 !important; object-fit: contain !important; max-width: none !important; image-rendering: pixelated !important; margin: 0 auto;';
+            mapImg.dataset.aohudBig = '1';
+          }
+        }
+      }
+    }
+  }
+
+  function applyCleanScreen() {
+    const column = findRightPanelColumn();
+    const hudBody = document.getElementById('manual-body');
+    const hudPanel = document.getElementById('aohud-panel');
+
+    // v1.22: toggle body class para que CSS pueda ocultar cualquier panel residual del juego
+    document.body.classList.toggle('aohud-clean-on', cleanScreenEnabled);
+
+    if (cleanScreenEnabled && column && hudBody) {
+      // EMBED: si todavía no está en nuestro HUD, moverlo
+      if (!hudBody.contains(column)) {
+        embeddedRestore = { parent: column.parentElement, nextSibling: column.nextElementSibling };
+        column.classList.add('aohud-embedded-column');
+        column.style.display = '';
+        column.style.width = '100%';
+        column.style.height = 'auto';
+        hudBody.insertBefore(column, hudBody.firstChild);
+      }
+      if (hudPanel) hudPanel.classList.add('has-embedded');
+      // v1.18: aplicar la reorg interna (idempotente — chequea data-aohud flags)
+      applyEmbedReorg(column);
+    } else if (!cleanScreenEnabled && column && embeddedRestore) {
+      // RESTORE: devolver el column a su posición original (la reorg interna se mantiene pero el column vuelve)
+      try { embeddedRestore.parent.insertBefore(column, embeddedRestore.nextSibling); } catch(e) {}
+      column.classList.remove('aohud-embedded-column');
+      column.style.display = '';
+      column.style.width = '';
+      column.style.height = '';
+      embeddedRestore = null;
+      if (hudPanel) hudPanel.classList.remove('has-embedded');
+    }
+
+    // Scale canvas wrapper (mapa más grande cuando hay menos cosas alrededor)
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      let wrapper = canvas;
+      while (wrapper && !(wrapper.className?.toString() === 'relative' && wrapper.style?.width)) {
+        wrapper = wrapper.parentElement;
+      }
+      if (wrapper) {
+        wrapper.style.transform = cleanScreenEnabled ? `scale(${CLEAN_SCREEN_SCALE})` : '';
+        wrapper.style.transformOrigin = cleanScreenEnabled ? 'top left' : '';
+      }
+    }
+  }
+  function setCleanScreen(enabled) {
+    cleanScreenEnabled = !!enabled;
+    try { localStorage.setItem('aoweb-hud-cleanscreen', enabled ? '1' : '0'); } catch(e) {}
+    applyCleanScreen();
+    const toggleEl = document.getElementById('aohud-cleanscreen-toggle');
+    if (toggleEl) {
+      toggleEl.classList.toggle('active', cleanScreenEnabled);
+      toggleEl.textContent = cleanScreenEnabled ? '🗺' : '🗺';
+      toggleEl.title = cleanScreenEnabled ? 'Volver al layout normal' : 'Pantalla limpia (oculta panel derecho + agranda mapa)';
+    }
+  }
+
+  // v1.14: extras (slots configurables que castean via spellbook)
+  let extraSlots = [];
+  try { extraSlots = JSON.parse(localStorage.getItem('aoweb-hud-extras') || '[]'); } catch(e) {}
+  let extrasFormOpen = false;
+  // Hardcoded list of known self-target spells (used to default isSelf in the form)
+  const SELF_TARGET_SPELLS = new Set([
+    'fuerza', 'agilidad', 'inteligencia', 'constitucion', 'carisma',
+    'celeridad', 'bendicion', 'resistencia magica', 'detectar invisible',
+    'curar heridas leves', 'curar heridas graves', 'curar envenenamiento',
+    'remover paralisis', 'quitar maldicion', 'antidoto magico',
+  ]);
+
+  // v1.13: spell name normalization (case + accent insensitive) for macro lookup
+  function normalizeSpellName(s) {
+    return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+  }
+  // v1.13: normalize API macro keyCode to KeyboardEvent code string.
+  // CRITICAL: the aoweb API returns keyCode as STRING (e.g. "Digit1", "KeyR"), NOT number.
+  // Verified live 2026-05-14 via /api/auth/character-settings.
+  function keyCodeToEventCode(kc) {
+    if (typeof kc === 'string') return kc; // already a code like "Digit1" / "KeyR" / "Space"
+    if (typeof kc !== 'number') return null;
+    if (kc >= 48 && kc <= 57) return 'Digit' + (kc - 48);
+    if (kc >= 65 && kc <= 90) return 'Key' + String.fromCharCode(kc);
+    if (kc === 32) return 'Space';
+    if (kc === 13) return 'Enter';
+    if (kc === 27) return 'Escape';
+    if (kc >= 112 && kc <= 123) return 'F' + (kc - 111); // F1..F12
+    return null;
+  }
+  // v1.13: search user's API macros for a spell by label (returns event-code string or null)
+  function findMacroKey(spellName) {
+    if (!playerMacros || !playerMacros.length) return null;
+    const target = normalizeSpellName(spellName);
+    for (const m of playerMacros) {
+      if (m && m.label && normalizeSpellName(m.label) === target) {
+        return keyCodeToEventCode(m.keyCode);
+      }
+    }
+    return null;
+  }
 
   // v1.11: colores rotando por índice de instancia CC (para distinguir Oso 1/Oso 2/Oso 3)
   const CC_COLORS = ['#3a6fb0','#a06fc8','#d4a857','#5ba075','#c46a6a'];
@@ -378,29 +651,109 @@
     }, 50);
   }
 
-  // v1.11: autoRenewCeleridad — tecla 1 + click al centro del canvas (sobre PJ).
-  function autoRenewCeleridad() {
-    const now = Date.now();
-    if (now - lastAutoRenewAt < AUTO_RENEW_COOLDOWN_MS) return;
+  // v1.13: castSelfSpell — generic helper. Looks up spell macro by name, dispatches key + click on PJ.
+  // Returns true if cast was attempted, false if macro not found / blocked.
+  function castSelfSpell(spellName, logPrefix) {
+    const tag = '[AOWeb HUD]' + (logPrefix || '[cast-self]');
     const ae = document.activeElement;
     if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) {
-      console.log('[AOWeb HUD][auto-renew] skipped: input has focus');
-      return;
+      console.log(tag, 'skipped: input has focus');
+      return false;
+    }
+    const macroKey = findMacroKey(spellName);
+    if (!macroKey) {
+      console.log(tag, `skipped: no macro for "${spellName}"`);
+      return false;
     }
     const canvas = document.querySelector('canvas');
-    if (!canvas) { console.warn('[AOWeb HUD][auto-renew] canvas not found'); return; }
-    lastAutoRenewAt = now;
-    console.log('[AOWeb HUD][auto-renew] firing Celeridad (key 1 + click center)');
-    const ok = dispatchGameKey(CELERIDAD_MACRO_KEY);
-    if (!ok) { console.warn('[AOWeb HUD][auto-renew] dispatchGameKey returned false'); return; }
+    if (!canvas) { console.warn(tag, 'canvas not found'); return false; }
+    console.log(tag, `firing "${spellName}" via ${macroKey} + click center`);
+    const ok = dispatchGameKey(macroKey);
+    if (!ok) { console.warn(tag, 'dispatchGameKey returned false'); return false; }
     setTimeout(() => {
       const rect = canvas.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      console.log('[AOWeb HUD][auto-renew] dispatching click at', Math.round(cx), Math.round(cy));
       dispatchClick(canvas, cx, cy);
     }, 80);
-    showToast('Renovando Celeridad', '<5s para expirar', '🌀', 'discovery');
+    return true;
+  }
+
+  // v1.14: synthClick — full pointer+mouse sequence (verified live to work on React listbox)
+  function synthClick(el, atX, atY) {
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const cx = atX != null ? atX : r.left + r.width / 2;
+    const cy = atY != null ? atY : r.top + r.height / 2;
+    const o = { bubbles:true, cancelable:true, view:window, clientX:cx, clientY:cy, screenX:cx, screenY:cy, button:0, buttons:1 };
+    try { el.dispatchEvent(new PointerEvent('pointerdown', { ...o, pointerType:'mouse', isPrimary:true })); } catch(e) {}
+    el.dispatchEvent(new MouseEvent('mousedown', o));
+    try { el.dispatchEvent(new PointerEvent('pointerup', { ...o, buttons:0, pointerType:'mouse', isPrimary:true })); } catch(e) {}
+    el.dispatchEvent(new MouseEvent('mouseup', { ...o, buttons:0 }));
+    el.dispatchEvent(new MouseEvent('click', { ...o, buttons:0 }));
+  }
+
+  // v1.14: castSpellViaSpellbook — user-initiated cast for spells not macroeados.
+  // Flow verified live 2026-05-14: synth-click spell row → synth-click "Lanzar" → if self, synth-click canvas center.
+  // Click-iniciado por el user (click en botón del HUD), no reactivo → zona verde TOS.
+  async function castSpellViaSpellbook(spellName, isSelf) {
+    const tag = '[AOWeb HUD][extra]';
+    // 1) Ensure Hechizos tab is active
+    const hechizosTab = [...document.querySelectorAll('button')].find(b => /^Hechizos$/i.test(b.textContent?.trim() || ''));
+    if (!hechizosTab) { console.warn(tag, 'Hechizos tab not found'); return false; }
+    if (!hechizosTab.className.includes('orange') && !hechizosTab.getAttribute('aria-selected')?.includes('true')) {
+      synthClick(hechizosTab);
+      await new Promise(r => setTimeout(r, 150));
+    }
+    // 2) Find spell row in listbox
+    const target = normalizeSpellName(spellName);
+    const row = [...document.querySelectorAll('button[role=option]')].find(b => normalizeSpellName(b.textContent) === target);
+    if (!row) { console.warn(tag, `spell "${spellName}" not in spellbook (not learned?)`); showToast('No tenés ese hechizo', spellName, '⚠', 'discovery'); return false; }
+    row.scrollIntoView({ block: 'nearest' });
+    await new Promise(r => setTimeout(r, 100));
+    synthClick(row);
+    await new Promise(r => setTimeout(r, 150));
+    // 3) Click "Lanzar"
+    const lanzar = [...document.querySelectorAll('button')].find(b => /^Lanzar$/i.test(b.textContent?.trim() || ''));
+    if (!lanzar) { console.warn(tag, 'Lanzar button not found'); return false; }
+    if (lanzar.disabled) { console.warn(tag, 'Lanzar disabled (spell not selected?)'); return false; }
+    synthClick(lanzar);
+    await new Promise(r => setTimeout(r, 100));
+    // 4) If self-target, click canvas center
+    if (isSelf) {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        synthClick(canvas, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      }
+    }
+    console.log(tag, `cast "${spellName}" via spellbook (self=${isSelf})`);
+    return true;
+  }
+
+  function saveExtraSlots() {
+    try { localStorage.setItem('aoweb-hud-extras', JSON.stringify(extraSlots)); } catch(e) {}
+  }
+  function addExtraSlot(name, isSelf) {
+    if (!name) return;
+    if (extraSlots.some(s => normalizeSpellName(s.name) === normalizeSpellName(name))) return;
+    extraSlots.push({ name, isSelf: !!isSelf });
+    saveExtraSlots();
+    renderManual();
+  }
+  function removeExtraSlot(idx) {
+    extraSlots.splice(idx, 1);
+    saveExtraSlots();
+    renderManual();
+  }
+
+  // v1.11+v1.13: autoRenewCeleridad — refactored to use dynamic macro lookup (clan-compatible)
+  function autoRenewCeleridad() {
+    const now = Date.now();
+    if (now - lastAutoRenewAt < AUTO_RENEW_COOLDOWN_MS) return;
+    lastAutoRenewAt = now;
+    const fired = castSelfSpell('Celeridad', '[auto-renew]');
+    if (fired) showToast('Renovando Celeridad', '<5s para expirar', '🌀', 'discovery');
   }
 
   function setAutoRenewCeleridad(enabled) {
@@ -410,6 +763,7 @@
     showToast(enabled ? 'Auto-renovar Celeridad ON' : 'Auto-renovar Celeridad OFF', enabled ? 'Re-cast a <5s' : '', '🌀', enabled ? 'learned' : 'discovery');
     if (enabled) ensureBuffTicker();
   }
+
   function formatKeyLabel(code) {
     if (!code) return '?';
     if (code.startsWith('Key')) return code.slice(3);
@@ -891,6 +1245,69 @@
     #aohud-panel .m-slider:hover::-webkit-slider-thumb { background: #f4d97a; }
     #aohud-panel .m-slider-val { font-family: 'Press Start 2P', monospace;
       font-size: 10px; color: #f4d97a; min-width: 56px; text-align: right; }
+    /* v1.13: shortcuts row */
+    #aohud-panel .m-btn[disabled] { opacity: 0.45; cursor: not-allowed;
+      filter: grayscale(0.6); }
+    #aohud-panel .m-btn[disabled]:hover { background: rgba(15,12,8,0.55);
+      border-color: #5a4a25; }
+    /* v1.14: extras — slots configurables via spellbook */
+    #aohud-panel .m-extras-row { display: flex; flex-direction: column;
+      gap: 4px; padding: 0 0 8px; }
+    #aohud-panel .m-extra { display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; background: rgba(15,12,8,0.55);
+      border: 1px solid #5a4a25; border-left: 3px solid #8a6a2a;
+      border-radius: 3px; cursor: pointer; transition: all 0.15s;
+      color: #e8e8d0; font-family: inherit; text-align: left; }
+    #aohud-panel .m-extra:hover { background: rgba(212,168,87,0.18);
+      border-color: #d4a857; }
+    #aohud-panel .m-extra .ex-ico { font-size: 16px; flex-shrink: 0;
+      width: 20px; text-align: center; }
+    #aohud-panel .m-extra .ex-name { flex: 1; font-family: 'Cinzel', serif;
+      font-size: 13px; color: #efe2c5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #aohud-panel .m-extra .ex-self { font-family: 'Press Start 2P', monospace;
+      font-size: 8px; color: #b8d4ff;
+      background: rgba(111,154,223,0.18); padding: 2px 5px;
+      border-radius: 3px; }
+    #aohud-panel .m-extra .ex-enemy { font-family: 'Press Start 2P', monospace;
+      font-size: 8px; color: #ffb0b0;
+      background: rgba(160,24,24,0.22); padding: 2px 5px;
+      border-radius: 3px; }
+    #aohud-panel .m-extra .ex-del { color: #6a5a4a; cursor: pointer;
+      padding: 0 4px; font-size: 14px; line-height: 1;
+      transition: color 0.15s; }
+    #aohud-panel .m-extra .ex-del:hover { color: #e24b4a; }
+    #aohud-panel .ex-add-btn { width: 100%; padding: 6px;
+      background: rgba(15,12,8,0.5); border: 1px dashed #8a6a2a;
+      color: #b89a5a; cursor: pointer;
+      font-family: 'IM Fell English', serif; font-size: 13px;
+      font-style: italic; border-radius: 4px; transition: all 0.15s; }
+    #aohud-panel .ex-add-btn:hover { background: rgba(212,168,87,0.1);
+      border-color: #d4a857; color: #f4d97a; }
+    #aohud-panel .m-extra-form { display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 6px; background: rgba(20,15,8,0.6);
+      border: 1px solid #8a6a2a; border-radius: 4px; align-items: center; }
+    #aohud-panel .m-extra-form .ex-input { flex: 1 1 100%; padding: 5px;
+      background: rgba(15,12,8,0.6); border: 1px solid #5a4a25;
+      border-radius: 3px; color: #e8e8d0;
+      font-family: 'IM Fell English', serif; font-size: 13px; outline: none; }
+    #aohud-panel .m-extra-form .ex-input:focus { border-color: #d4a857; }
+    #aohud-panel .m-extra-form .ex-input option { background: #1a1308;
+      color: #e8e8d0; }
+    #aohud-panel .m-extra-form .ex-radio { font-family: 'IM Fell English', serif;
+      font-size: 12px; color: #b8a878; display: flex; align-items: center;
+      gap: 4px; cursor: pointer; }
+    #aohud-panel .m-extra-form .ex-radio input { margin: 0; }
+    #aohud-panel .m-extra-form .ex-save { padding: 4px 10px;
+      background: rgba(108,221,138,0.18); border: 1px solid #6dd58a;
+      color: #b6f0c3; cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 1px; border-radius: 3px; flex: 1; }
+    #aohud-panel .m-extra-form .ex-save:hover { background: rgba(108,221,138,0.32); }
+    #aohud-panel .m-extra-form .ex-cancel { padding: 4px 8px;
+      background: rgba(160,24,24,0.18); border: 1px solid #a01818;
+      color: #fbb; cursor: pointer; font-size: 14px; line-height: 1;
+      border-radius: 3px; }
     /* v1.11: presets de velocidad */
     #aohud-panel .m-preset-row { display: flex; gap: 4px; padding: 0 0 10px; flex-wrap: wrap; }
     #aohud-panel .m-preset-btn { flex: 1; min-width: 38px; padding: 4px 6px;
@@ -1043,6 +1460,68 @@
     #aohud-panel .opacity-row input[type=range] { flex: 1; height: 4px; accent-color: #d4a857; cursor: pointer; }
     #aohud-panel .footer .stat { font-family: 'Press Start 2P', monospace;
       font-size: 8px; color: #8a7a5a; letter-spacing: -0.5px; }
+    /* v1.20+v1.21: barras propias de VIDA/MANA — match el estilo de EXPERIENCIA del juego */
+    #aohud-custom-bars { width: 100%; }
+    #aohud-custom-bars .aohud-cb-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: inherit; font-size: 10px;
+      font-weight: 600; letter-spacing: 0.04em;
+      color: #cbb18e; text-transform: uppercase; }
+    #aohud-custom-bars .aohud-cb-val {
+      font-family: inherit; font-size: 11px; font-weight: 600;
+      color: #f4f0d0; letter-spacing: 0; }
+    #aohud-custom-bars .aohud-cb-bar {
+      height: 8px; margin-top: 2px; overflow: hidden;
+      background: rgba(15,12,8,0.7);
+      border: 1px solid rgba(94,69,41,0.6); border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.6); }
+    #aohud-custom-bars .aohud-cb-fill {
+      height: 100%; width: 0%; transition: width 0.25s ease-out; }
+    #aohud-custom-bars .aohud-cb-hp-fill {
+      background: linear-gradient(to bottom, #e64545 0%, #a01818 60%, #6a0808 100%); }
+    #aohud-custom-bars .aohud-cb-mp-fill {
+      background: linear-gradient(to bottom, #6dafe6 0%, #2a5aa0 60%, #1a3a70 100%); }
+
+    /* v1.21+v1.23: header en flex-wrap. Avatar al top, NO se estira al alto de los bars */
+    #aohud-panel .player-header { flex-wrap: wrap; }
+    #aohud-panel .player-header .avatar-wrap,
+    #aohud-panel .player-header .pinfo { align-self: flex-start; }
+    #aohud-panel.has-embedded .player-header .avatar-wrap { width: 72px; height: 72px; }
+    #aohud-panel.has-embedded .player-header .avatar { width: 72px; height: 72px;
+      font-size: 36px; }
+    /* Items full-width directos del header (EXP, custom bars, leftCol, goldRow) */
+    #aohud-panel .player-header > .aohud-full-width {
+      flex-basis: 100%; width: 100%; margin-top: 6px; }
+    /* v1.23: separador visual entre bloque "avatar+name" y "bars below" */
+    #aohud-panel.has-embedded .player-header > .aohud-full-width:first-of-type {
+      margin-top: 10px;
+      border-top: 1px solid rgba(106, 74, 24, 0.4);
+      padding-top: 10px; }
+    /* v1.17: resize handle del HUD (borde derecho) */
+    #aohud-resize-handle { position: absolute; top: 0; right: -3px;
+      width: 8px; height: 100%; cursor: ew-resize;
+      background: transparent; z-index: 10;
+      transition: background 0.15s; }
+    #aohud-resize-handle:hover {
+      background: linear-gradient(90deg, transparent, rgba(212,168,87,0.4), transparent); }
+    #aohud-resize-handle::after { content: ''; position: absolute;
+      right: 3px; top: 50%; transform: translateY(-50%);
+      width: 2px; height: 36px; background: rgba(138,106,42,0.5);
+      border-radius: 1px; transition: background 0.15s; }
+    #aohud-resize-handle:hover::after { background: #d4a857; }
+    /* v1.16: embedded right panel — cuando movemos el column del juego dentro del HUD */
+    .aohud-embedded-column { gap: 8px !important; padding: 4px 0 !important; }
+    .aohud-embedded-column > * { width: 100% !important; }
+    #aohud-panel.has-embedded { width: 380px; }
+    /* v1.22: cuando clean screen está ON, ocultar CUALQUIER panel column del juego que NO sea nuestro embed.
+       Esto cubre el caso de que React re-renderice el panel original mientras movimos uno. */
+    body.aohud-clean-on .flex.h-full.flex-col.gap-2.text-stone-100:not(.aohud-embedded-column) {
+      display: none !important; visibility: hidden !important; }
+    #aohud-panel .footer .cleanscreen-toggle { cursor: pointer; font-size: 16px;
+      opacity: 0.4; transition: all 0.15s; margin-right: 8px; }
+    #aohud-panel .footer .cleanscreen-toggle:hover { transform: scale(1.2); opacity: 0.8; }
+    #aohud-panel .footer .cleanscreen-toggle.active { opacity: 1;
+      filter: drop-shadow(0 0 4px rgba(212,168,87,0.7)); }
     #aohud-panel .footer .sound-toggle { cursor: pointer; font-size: 16px;
       opacity: 0.9; transition: all 0.15s; }
     #aohud-panel .footer .sound-toggle:hover { transform: scale(1.2); }
@@ -1324,6 +1803,7 @@
     <div class="footer">
       <div class="footer-row">
         <span class="stat" id="stat-ws">0 ws</span>
+        <span class="cleanscreen-toggle" id="aohud-cleanscreen-toggle" title="Pantalla limpia (oculta panel derecho + agranda mapa)">🗺</span>
         <span class="sound-toggle" id="aohud-sound-toggle" title="Alarmas de estado">🔔</span>
       </div>
       <div class="opacity-row">
@@ -1875,10 +2355,45 @@
         html += `<div class="m-hint" style="margin:2px 0 8px">Pegale a algo 3-4 veces seguidas y voy a medir tu cadencia real del arma.</div>`;
       }
 
-      // v1.11: Auto-renovar Celeridad (piloto)
+      // v1.11+v1.13: Auto-renovar Celeridad (lookup dinámico de macro)
       html += '<div class="m-title">Buffs</div>';
-      html += renderToggle('ahm-renew-btn', autoRenewCeleridadEnabled, 'AUTO-RENOVAR CELERIDAD', `Tecla 1 + click centro · <${AUTO_RENEW_THRESHOLD_S}s`, '🌀', 'm-renew');
-      html += `<div class="m-hint" style="margin:2px 0 8px">Piloto: cuando Celeridad esté por expirar, simula tecla 1 + click sobre tu PJ (centro canvas).</div>`;
+      const celerKey = findMacroKey('Celeridad');
+      const celerSub = celerKey ? `${formatKeyLabel(celerKey)} + click · <${AUTO_RENEW_THRESHOLD_S}s` : '(no macroeada)';
+      html += renderToggle('ahm-renew-btn', autoRenewCeleridadEnabled, 'AUTO-RENOVAR CELERIDAD', celerSub, '🌀', 'm-renew', !celerKey);
+
+      // v1.14: Extras — slots configurables que castean via spellbook
+      html += '<div class="m-title">Extras (más allá de los 8 macros)</div>';
+      html += '<div class="m-hint" style="margin:2px 0 6px">Click = abre Hechizos, selecciona, lanza. Self-cast clickea PJ; enemy lo clickeás vos.</div>';
+      if (extraSlots.length > 0) {
+        html += '<div class="m-extras-row">';
+        for (let i = 0; i < extraSlots.length; i++) {
+          const s = extraSlots[i];
+          const ico = SPELL_ICONS[s.name] || (s.isSelf ? '✦' : '⚔');
+          const selfBadge = s.isSelf ? '<span class="ex-self">self</span>' : '<span class="ex-enemy">enemy</span>';
+          html += `<button class="m-extra" data-extra-i="${i}" title="${escHtml(s.name)}" type="button">
+            <span class="ex-ico">${ico}</span>
+            <span class="ex-name">${escHtml(s.name)}</span>
+            ${selfBadge}
+            <span class="ex-del" data-extra-del="${i}" title="Quitar">×</span>
+          </button>`;
+        }
+        html += '</div>';
+      }
+      // Add slot form
+      if (extrasFormOpen) {
+        const spellOptions = Object.keys(SPELLS_DB || {}).sort()
+          .map(n => `<option value="${escHtml(n)}">${escHtml(n)}</option>`)
+          .join('');
+        html += `<div class="m-extra-form">
+          <select id="ahm-extra-name" class="ex-input"><option value="">— elegí un hechizo —</option>${spellOptions}</select>
+          <label class="ex-radio"><input type="radio" name="ex-target" value="self" id="ahm-extra-self" checked /> Self</label>
+          <label class="ex-radio"><input type="radio" name="ex-target" value="enemy" id="ahm-extra-enemy" /> Enemy</label>
+          <button id="ahm-extra-save" class="ex-save" type="button">Guardar</button>
+          <button id="ahm-extra-cancel" class="ex-cancel" type="button">×</button>
+        </div>`;
+      } else {
+        html += '<button id="ahm-extra-add" class="ex-add-btn" type="button">+ Agregar slot</button>';
+      }
 
       content = html;
     } else if (currentTab === 'stats') {
@@ -2081,6 +2596,49 @@
       setAutoRenewCeleridad(!autoRenewCeleridadEnabled);
       renewBtn.blur();
     });
+    // v1.14: extras (slots configurables via spellbook)
+    body.querySelectorAll('.m-extra').forEach(b => {
+      b.addEventListener('click', (ev) => {
+        // If clicked the delete X, handle that and stop
+        if (ev.target.classList.contains('ex-del')) {
+          const di = +ev.target.getAttribute('data-extra-del');
+          removeExtraSlot(di);
+          ev.stopPropagation();
+          return;
+        }
+        const i = +b.getAttribute('data-extra-i');
+        const slot = extraSlots[i];
+        if (!slot) return;
+        castSpellViaSpellbook(slot.name, slot.isSelf);
+        b.blur();
+      });
+    });
+    const addBtn = body.querySelector('#ahm-extra-add');
+    if (addBtn) addBtn.addEventListener('click', () => { extrasFormOpen = true; renderManual(); });
+    const cancelBtn = body.querySelector('#ahm-extra-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', () => { extrasFormOpen = false; renderManual(); });
+    const saveBtn = body.querySelector('#ahm-extra-save');
+    if (saveBtn) {
+      const nameSel = body.querySelector('#ahm-extra-name');
+      const selfRadio = body.querySelector('#ahm-extra-self');
+      // Auto-set self/enemy when spell changes
+      if (nameSel) nameSel.addEventListener('change', () => {
+        const norm = normalizeSpellName(nameSel.value);
+        if (norm && SELF_TARGET_SPELLS.has(norm)) {
+          body.querySelector('#ahm-extra-self').checked = true;
+        } else if (norm) {
+          body.querySelector('#ahm-extra-enemy').checked = true;
+        }
+      });
+      saveBtn.addEventListener('click', () => {
+        const name = (nameSel?.value || '').trim();
+        const isSelf = selfRadio?.checked || false;
+        if (!name) return;
+        addExtraSlot(name, isSelf);
+        extrasFormOpen = false;
+        renderManual();
+      });
+    }
   }
 
   function updateFooter() {
@@ -2677,10 +3235,11 @@
     });
     refreshStickyAA();
 
-    // v1.11: Double-tap Space → toggle auto-attack (capture phase, no preventDefault)
+    // v1.12.1: Double-tap Space → toggle auto-attack. isTrusted filter: ignora los Space que dispara el propio auto-ataque
     window.addEventListener('keydown', (e) => {
       if (e.code !== 'Space' && e.keyCode !== 32) return;
       if (e.repeat) return;
+      if (!e.isTrusted) return; // ignore our own synthetic Space (the bug: auto-attack apagaba solo)
       const ae = document.activeElement;
       if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
       const now = Date.now();
@@ -2703,6 +3262,33 @@
       if (panel.classList.contains('collapsed')) { panel.classList.remove('collapsed'); return; }
       showHeadPicker();
     });
+
+    // v1.17: HUD column resizable (drag right edge to change width)
+    {
+      const HUD_MIN_W = 260, HUD_MAX_W = 800;
+      const savedW = +localStorage.getItem('aoweb-hud-width');
+      if (savedW >= HUD_MIN_W && savedW <= HUD_MAX_W) panel.style.width = savedW + 'px';
+      const handle = document.createElement('div');
+      handle.id = 'aohud-resize-handle';
+      handle.title = 'Arrastrá para ensanchar / afinar';
+      panel.appendChild(handle);
+      let rz = false, sx = 0, sw = 0;
+      handle.addEventListener('mousedown', (e) => {
+        rz = true; sx = e.clientX; sw = panel.offsetWidth;
+        e.preventDefault(); e.stopPropagation();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!rz) return;
+        const nw = Math.max(HUD_MIN_W, Math.min(HUD_MAX_W, sw + (e.clientX - sx)));
+        panel.style.width = nw + 'px';
+      });
+      document.addEventListener('mouseup', () => {
+        if (rz) {
+          rz = false;
+          try { localStorage.setItem('aoweb-hud-width', String(panel.offsetWidth)); } catch(e) {}
+        }
+      });
+    }
 
     // Draggable panel
     {
@@ -2783,6 +3369,23 @@
       soundToggle.classList.toggle('muted', !soundAlertsEnabled);
     });
 
+    // v1.15: clean screen toggle
+    const cleanToggle = document.getElementById('aohud-cleanscreen-toggle');
+    if (cleanToggle) {
+      cleanToggle.classList.toggle('active', cleanScreenEnabled);
+      cleanToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setCleanScreen(!cleanScreenEnabled);
+      });
+    }
+    // Apply on init — retry a few times because game's right panel may mount async
+    let cleanScreenRetries = 0;
+    const cleanScreenInterval = setInterval(() => {
+      applyCleanScreen();
+      cleanScreenRetries++;
+      if (cleanScreenRetries > 20) clearInterval(cleanScreenInterval);
+    }, 500);
+
     const opacitySlider = document.getElementById('aohud-opacity');
     const savedOpacity = +localStorage.getItem('aoweb-hud-opacity') || 75;
     opacitySlider.value = savedOpacity;
@@ -2828,10 +3431,12 @@
     setInterval(readGameBuffTimers, 2000);
     setInterval(readPlayerXP, 5000);
     setInterval(readPlayerHP, 2000);
+    // v1.20: refresh custom HP/MP bars cada 250ms (solo si cleanScreen activo)
+    setInterval(() => { if (cleanScreenEnabled) renderCustomHpMpBars(); }, 250);
   }
 
   if (document.body) init();
   else window.addEventListener('DOMContentLoaded', init);
 
-  console.log('%c[AOWeb HUD v1.11] sticky auto-ataque · double-tap Space · multi-CC click-to-lock · auto-renovar Celeridad piloto', 'color:#d4a857;font-weight:bold;font-family:serif');
+  console.log('%c[AOWeb HUD v1.23] Avatar al top + bloque separado + map width 100% (mucho más grande)', 'color:#d4a857;font-weight:bold;font-family:serif');
 })();
